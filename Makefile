@@ -6,6 +6,7 @@ OBJS = server.o request.o segel.o client.o
 TARGET = server
 
 CC = gcc
+CC2 = gcc -pthread
 CFLAGS = -g -Wall
 
 LIBS = -lpthread 
@@ -20,7 +21,7 @@ server: server.o request.o segel.o
 	$(CC) $(CFLAGS) -o server server.o request.o segel.o $(LIBS)
 
 client: client.o segel.o
-	$(CC) $(CFLAGS) -o client client.o segel.o
+	$(CC2) $(CFLAGS) -o client client.o segel.o
 
 output.cgi: output.c
 	$(CC) $(CFLAGS) -o output.cgi output.c

@@ -22,6 +22,9 @@
  */
 
 #include "segel.h"
+#include <pthread.h>
+#include <stdio.h>
+#include <unistd.h>
 
 /*
  * Send an HTTP request for the specified file 
@@ -71,7 +74,64 @@ void clientPrint(int fd)
   }
 }
 
-int main(int argc, char *argv[])
+
+void* print_m(void* number) {
+   // cast the thread argument
+   int* num = (int*)number;
+   printf("I'm thread number %d, PID = %d, pthread ID = %ld\n", 
+          *num, getpid(), pthread_self());
+   return NULL;
+}
+
+/**
+* my new main
+*/
+int main(int argc, char *argv[]) 
+{
+  char *host, *filename;
+  int port;
+  int clientfd;
+  pthread_t t;
+  int result, num_of_threads;
+
+
+  if (argc > 5 || argc < 4) {
+    fprintf(stderr, "Usage: %s <host> <port> <filename>\n", argv[0]);
+    exit(1);
+  }
+
+  host = argv[1];
+  port = atoi(argv[2]);
+  filename = argv[3];
+  if(argc == 5) {
+    num_of_threads = argv[4];
+  }
+  else {
+    num_of_threads = 10;
+  }
+
+  // open a new entry for the relevant port in the FDT
+  clientfd = Open_clientfd(host, port);
+
+  // create threads in a for loop and let them execute next line in the file
+  // threads share FDT's
+  for(int i=0; i < num_of_threads; i++) {
+    result = pthread_create(&t, NULL, print_m, &i);
+    if(result) {
+      printf("Error:unable to create thread number %d", i);
+      exit(0);
+    }
+    // each thread operates:
+    clientSend(clientfd, filename);
+    clientPrint(clientfd);
+    exit(0);
+  }
+  Close(clientfd);
+  return 0;
+}
+
+
+int main_orig(int argc, char *argv[])
 {
   char *host, *filename;
   int port;
