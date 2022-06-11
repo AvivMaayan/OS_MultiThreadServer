@@ -13,18 +13,16 @@ def index_command(i):  # returns "index$i.html"
 
 # returns randomly 1,2,3.
 # 1 for html, 2 for sleep, 3 for doesn't exist
-
-
 def command_type():
     return randint(1, 3)
 
 
+# random sleepy times for our baby server
+# i love cupcakes 
 def random_sleep():
     return randint(1, 20)
 
-
-
-# generates <num_of_comm> random commands 
+# generates <num_of_comm> random commands to a file called test_me.txt
 sleep_comm = " output.cgi?"
 if(os.path.isfile("test_me.txt")):
     f = os.open("test_me.txt", os.O_RDWR | os.O_TRUNC)
