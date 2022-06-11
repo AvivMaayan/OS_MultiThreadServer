@@ -25,6 +25,7 @@
 #include <pthread.h>
 #include <stdio.h>
 #include <unistd.h>
+#include <stdlib.h>
 
 /*
  * Send an HTTP request for the specified file 
@@ -74,6 +75,20 @@ void clientPrint(int fd)
   }
 }
 
+/**
+* my new stuff
+*/
+
+int readSendCommand(int clientfd)
+{
+  char buffer[MAXLINE];
+  int a[MAXLINE];
+  int i = 0;
+  while(scanf("%i",&a[i])==1 && buffer[i] != EOL)
+      i++;
+  clientSend(clientfd, buffer);
+}
+
 
 void* print_m(void* number) {
    // cast the thread argument
@@ -83,16 +98,13 @@ void* print_m(void* number) {
    return NULL;
 }
 
-/**
-* my new main
-*/
 int main(int argc, char *argv[]) 
 {
   char *host, *filename;
   int port;
   int clientfd;
   pthread_t t;
-  int result, num_of_threads;
+  int result, num_of_threads, count;
 
 
   if (argc > 5 || argc < 4) {
@@ -112,7 +124,8 @@ int main(int argc, char *argv[])
 
   // open a new entry for the relevant port in the FDT
   clientfd = Open_clientfd(host, port);
-
+  FILE *fd = fopen("26.txt", "r");
+  freopen("test_me.txt", "r", stdin);
   // create threads in a for loop and let them execute next line in the file
   // threads share FDT's
   for(int i=0; i < num_of_threads; i++) {
@@ -121,12 +134,16 @@ int main(int argc, char *argv[])
       printf("Error:unable to create thread number %d", i);
       exit(0);
     }
+    /*
+    * check if original thread - then continue!!
+    */
     // each thread operates:
-    clientSend(clientfd, filename);
+    readSendCommand(clientfd);
     clientPrint(clientfd);
     exit(0);
   }
   Close(clientfd);
+  Close(fd)
   return 0;
 }
 
