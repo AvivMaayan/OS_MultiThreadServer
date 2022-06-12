@@ -122,7 +122,6 @@ void requestServeDynamic(int fd, char *filename, char *cgiargs)
    Wait(NULL);
 }
 
-
 void requestServeStatic(int fd, char *filename, int filesize) 
 {
    int srcfd;
@@ -193,5 +192,3 @@ void requestHandle(int fd)
       requestServeDynamic(fd, filename, cgiargs);
    }
 }
-
-
