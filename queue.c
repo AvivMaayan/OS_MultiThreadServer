@@ -61,7 +61,7 @@ bool queueIsFull(Queue queue) {
 }
 
 // removes the oldest node in the queue and returns its info
-int queueGetBack(Queue queue) {
+int queuePop(Queue queue) {
     if(queueIsEmpty(queue)) {
         return -1;
     }
@@ -79,7 +79,7 @@ int queueGetBack(Queue queue) {
     return result;
 }
 
-void queuePushBack(Queue queue, int info) {
+void queuePush(Queue queue, int info) {
     if(queueIsFull(queue)) {
         return;
     }

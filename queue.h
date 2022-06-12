@@ -30,9 +30,9 @@ bool queueIsEmpty(Queue queue);
 
 bool queueIsFull(Queue queue);
 
-int queueGetBack(Queue queue);
+int queuePop(Queue queue);
 
-void queuePushBack(Queue queue, int info);
+void queuePush(Queue queue, int info);
 
 void queueRemove(Queue queue, int to_remove);
 
