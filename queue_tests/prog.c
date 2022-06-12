@@ -21,14 +21,21 @@ int main()
     printf("remove 11:");
     queueRemove(q, 11);
 
-    THEWALL("1.4 remove specific 15")
-    printf("remove 15:");
-    queueRemove(q, 15);
+    THEWALL("1.4 top")
+    printf("top is:");
+    printf("%d",queueGetFD(q));
 
-    THEWALL("1.5 remove specific 19")
-    printf("remove 19:");
-    queueRemove(q, 19);
+    THEWALL("1.5 remove top")
+    queuePop(q);
 
+    THEWALL("1.6 top2")
+    printf("top is:");
+    printf("%d",queueGetFD(q));
+
+    THEWALL("1.7 remove top2")
+    queuePop(q);
+
+    THEWALL("")
     queueDestroy(q);
 
     return 0;
