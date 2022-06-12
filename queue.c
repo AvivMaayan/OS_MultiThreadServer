@@ -17,6 +17,7 @@ Node nodeCreate(int info) {
     node->time = time(NULL); 
     node->info = info;
     node->next = NULL;
+    printf("Created node %d\n", info);
     return node;
 }
 
@@ -46,6 +47,8 @@ Queue queueCreate(int max_size) {
     queue->size = 0;
     queue->max = max_size;
     queue->last = NULL;
+    printf("Created queue with max size %d\n", max_size);
+    return queue;
 }
 
 Queue queueIsEmpty(Queue queue) {
@@ -89,7 +92,7 @@ void queuePushBack(Queue queue, int info) {
         queue->last = new_node;
         setNext(queue->last, temp);
     }
-
+    printf("Queue added %d\n", info);
     queue->size++;
 
 }
@@ -117,7 +120,7 @@ void queueRemove(int to_remove) {
     }
     free(to_delete);
     queue->size--;
-    printf("removed %d", to_remove);
+    printf("Queue removed %d\n", to_remove);
 }
 
 void queueDestroy(Queue queue) {
