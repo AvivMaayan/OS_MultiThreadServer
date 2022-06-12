@@ -103,14 +103,16 @@ int main(int argc, char *argv[])
   pthread_t t;
   int result, num_of_threads;
 
-  if (argc > 5 || argc < 4)
+  /*if (argc > 5 || argc < 4)
   {
     fprintf(stderr, "Usage: %s <host> <port> <filename>\n", argv[0]);
     exit(1);
-  }
+  }*/
 
-  host = argv[1];
-  port = atoi(argv[2]);
+  // host = argv[1];
+  // port = atoi(argv[2]);
+  host = "localhost";
+  port = 2003;
   if (argc == 5)
   {
     num_of_threads = *argv[4];
