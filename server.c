@@ -36,6 +36,8 @@ int ready_threads;
 int **thread_stats;
 Queue busy_q, wait_q;
 
+void *serviceRequests(void *thread_id_ptr);
+
 void initThreadArrays(int threads_num, pthread_t **threads, int **thread_ids)
 {
     *threads = malloc(threads_num * sizeof(**threads));
@@ -121,7 +123,7 @@ void getArgs(int *port_num, int *threads_num, int *queue_size, sched_alg_t *sche
     *port_num = atoi(argv[1]);
     *threads_num = atoi(argv[2]);
     *queue_size = atoi(argv[3]);
-    char *alg = atoi(argv[4]);
+    char *alg = argv[4];
     if (strcmp(alg, "block"))
         *schedalg = SCH_BLOCK;
     else if (strcmp(alg, "dt"))
@@ -150,7 +152,7 @@ void *serviceRequests(void *thread_id_ptr)
         pthread_cond_signal(&thread_ready_cond);
         while (queueIsEmpty(wait_q))
         {
-            pthread_cond_wait(&queue_lock, &req_ready_cond);
+            pthread_cond_wait(&req_ready_cond, &queue_lock);
             // Critical part end + start
         }
         int connfd = queueGetFD(wait_q);
@@ -167,12 +169,12 @@ void *serviceRequests(void *thread_id_ptr)
         stats.handler_thread_dynamic_req_count = thread_stats[thread_id][STAT_DYNAMIC];
         //
 
-        queuePushBack(busy_q, connfd);
+        queuePush(busy_q, connfd);
         ready_threads--;
         pthread_mutex_unlock(&queue_lock);
         // Critical part end
 
-        req_handle_res res = requestHandle(connfd, stat);
+        req_handle_res res = requestHandle(connfd, &stats);
         if (res == REQ_STATIC) thread_stats[thread_id][STAT_STATIC]++;
         else if (res == REQ_DYNAMIC) thread_stats[thread_id][STAT_DYNAMIC]++;
         Close(connfd);

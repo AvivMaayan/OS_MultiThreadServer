@@ -28,6 +28,8 @@ Queue queueCreate(int max_size);
 
 bool queueIsEmpty(Queue queue);
 
+int queueGetSize(Queue queue);
+
 bool queueIsFull(Queue queue);
 
 int queuePop(Queue queue);

@@ -564,5 +564,3 @@ int Open_listenfd(int port)
         unix_error("Open_listenfd error");
     return rc;
 }
-
-

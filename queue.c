@@ -59,6 +59,11 @@ bool queueIsEmpty(Queue queue) {
     return queue->size == 0; 
 }
 
+int queueGetSize(Queue queue)
+{
+    return queue->size;
+}
+
 bool queueIsFull(Queue queue) {
     return queue->size == queue->max;
 }
@@ -123,7 +128,7 @@ void queueRemove(Queue queue, int to_remove) {
         // the last is the one to remove. 
         queue->last = getNext(queue->last);
         if(queue->first->info == to_remove) { //this is also the first node!
-            queue->first == NULL;
+            queue->first = NULL;
         }
     }
     else {
