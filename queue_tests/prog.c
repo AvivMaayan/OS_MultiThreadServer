@@ -8,7 +8,7 @@ int main()
 {
     Queue q = queueCreate(20);
     for(int i=1; i<=20; i++) {
-        queuePushBack(q, i);
+        queuePush(q, i);
         sleep(1);
     }
     THEWALL("1.1 is full")
@@ -17,7 +17,7 @@ int main()
     THEWALL("1.2 pop back")
     printf("Bring me 1-10:\n");
     for(int i=1; i<=10; i++) {
-        queueGetBack(q);
+        queuePop(q);
     }
 
     THEWALL("1.3 remove specific 11")
