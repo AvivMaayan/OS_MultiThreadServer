@@ -144,7 +144,7 @@ int main(int argc, char *argv[])
     exit(0);
   }
   Close(clientfd);
-  Close(fd)
+  Close(fd);
   return 0;
 }
 
