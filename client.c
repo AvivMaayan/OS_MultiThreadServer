@@ -90,9 +90,9 @@ void *print_m(void *fd)
   char a[MAXLINE];
   char b[MAXLINE];
   scanf("%2000s %2000[^\n]", a, b);
-  printf("%s\n", a);
-  // clientSend(*clientfd, a);
-  // clientPrint(*clientfd);
+  // printf("%s\n", a);
+  clientSend(*clientfd, a);
+  clientPrint(*clientfd);
   printf("Thread number %ld is DEAD!!\n", pthread_self());
   pthread_exit(NULL);
   return NULL;
@@ -105,22 +105,12 @@ int main()
   int clientfd;
   pthread_t t[10];
   int result, num_of_threads;
-
-  /*if (argc > 5 || argc < 4)
-  {
-    fprintf(stderr, "Usage: %s <host> <port> <filename>\n", argv[0]);
-    exit(1);
-  }*/
-
-  // host = argv[1];
-  // port = atoi(argv[2]);
   host = "localhost";
   port = 2003;
   num_of_threads = 10;
 
   // open a new entry for the relevant port in the FDT
-  // clientfd = Open_clientfd(host, port);
-  // int fd = Open("test_me.txt", O_CREAT, S_IRWXU);
+  clientfd = Open_clientfd(host, port);
   FILE *file = freopen("test_me.txt", "r", stdin);
   int fd = fileno(file);
   // create threads in a for loop and let them execute next line in the file
@@ -137,7 +127,7 @@ int main()
   for(int i=0; i<num_of_threads; i++) {
     pthread_join(t[i], NULL);
   }
-  // Close(clientfd);
+  Close(clientfd);
   Close(fd);
   return 0;
 }
