@@ -142,6 +142,8 @@ void *serviceRequests(void *thread_id_ptr)
     int thread_id = *(int *)thread_id_ptr;
     while (1)
     {
+        struct stat_s stats;
+        stats.handler_thread_id = thread_id;
         // Critical part start
         pthread_mutex_lock(&queue_lock);
         ready_threads++;
@@ -151,13 +153,28 @@ void *serviceRequests(void *thread_id_ptr)
             pthread_cond_wait(&queue_lock, &req_ready_cond);
             // Critical part end + start
         }
-        int connfd = queueGetBack(wait_q);
+        int connfd = queueGetFD(wait_q);
+        thread_stats[thread_id][STAT_TOTAL]++;
+
+        // Filling in stats
+        stats.arrival_time = queueGetTime(wait_q);
+        queuePop(wait_q);
+        gettimeofday(&stats.service_time, NULL);
+        stats.dispatch_interval.tv_sec = stats.service_time.tv_sec - stats.arrival_time.tv_sec;
+        stats.dispatch_interval.tv_usec = stats.service_time.tv_usec - stats.arrival_time.tv_usec;
+        stats.handler_thread_req_count = thread_stats[thread_id][STAT_TOTAL];
+        stats.handler_thread_static_req_count = thread_stats[thread_id][STAT_STATIC];
+        stats.handler_thread_dynamic_req_count = thread_stats[thread_id][STAT_DYNAMIC];
+        //
+
         queuePushBack(busy_q, connfd);
         ready_threads--;
         pthread_mutex_unlock(&queue_lock);
         // Critical part end
 
-        requestHandle(connfd);
+        req_handle_res res = requestHandle(connfd, stat);
+        if (res == REQ_STATIC) thread_stats[thread_id][STAT_STATIC]++;
+        else if (res == REQ_DYNAMIC) thread_stats[thread_id][STAT_DYNAMIC]++;
         Close(connfd);
 
         // Critical part start
