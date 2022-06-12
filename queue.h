@@ -12,11 +12,11 @@ typedef struct Node *Node;
 
 // This is Node's methods right there:
 
-Node nodeCreate(int info);
+Node nodeCreate(int info, struct timeval _time);
 
 int getInfo(Node orig);
 
-int getTime(Node orig);
+struct timeval getTime(Node orig);
 
 Node setNext(Node orig, Node next);
 
@@ -32,6 +32,10 @@ bool queueIsFull(Queue queue);
 
 int queuePop(Queue queue);
 
+int queueGetFD(Queue queue);
+
+struct timeval queueGetTime(Queue queue);
+
 void queuePush(Queue queue, int info);
 
 void queueRemove(Queue queue, int to_remove);
@@ -40,6 +44,6 @@ void queueDestroy(Queue queue);
 
 void queuePrint(Queue queue);
 
-void queueDropAmountRandomly(Queue queue);
+void queueDropAmountRandomly(Queue queue, int amount);
 
 #endif //QUEUE_H
