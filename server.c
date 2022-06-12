@@ -11,6 +11,8 @@
 // Most of the work is done within routines written in request.c
 //
 
+#define DROP_PERCENT 0.3
+#define FD_CLOSED -1
 enum
 {
     STAT_STATIC,
@@ -26,9 +28,9 @@ typedef enum
     SCH_RANDOM,
 } sched_alg_t;
 
-pthread_mutex_t accept_req;
-pthread_mutex_t finish_req;
-pthread_cond_t open_req_cond;
+pthread_mutex_t queue_lock;
+pthread_cond_t thread_ready_cond;
+pthread_cond_t req_ready_cond;
 int ready_threads;
 int **thread_stats;
 Queue busy_q, wait_q;
@@ -102,9 +104,9 @@ int initQueues(int threads_num, int queue_size)
 int initLocks()
 {
     ready_threads = 0;
-    return pthread_mutex_init(&accept_req, NULL) +
-           pthread_mutex_init(&finish_req, NULL) +
-           pthread_cond_init(&open_req_cond, NULL);
+    return pthread_mutex_init(&queue_lock, NULL) +
+           pthread_mutex_init(&queue_lock, NULL) +
+           pthread_cond_init(&req_ready_cond, NULL);
 }
 
 // HW3: Parse the new arguments too
@@ -140,30 +142,35 @@ void *serviceRequests(void *thread_id_ptr)
     while (1)
     {
         // Critical part start
-        pthread_mutex_lock(&accept_req);
+        pthread_mutex_lock(&queue_lock);
         ready_threads++;
-        pthread_cond_signal(&finish_req);
+        pthread_cond_signal(&thread_ready_cond);
         while (queueIsEmpty(wait_q))
         {
-            pthread_cond_wait(&accept_req, &open_req_cond);
+            pthread_cond_wait(&queue_lock, &req_ready_cond);
             // Critical part end + start
         }
         int connfd = queueGetBack(wait_q);
         queuePushBack(busy_q, connfd);
         ready_threads--;
-        pthread_mutex_unlock(&accept_req);
+        pthread_mutex_unlock(&queue_lock);
         // Critical part end
 
         requestHandle(connfd);
         Close(connfd);
 
         // Critical part start
-        pthread_mutex_lock(&accept_req);
-        queueRemove(connfd);
-        pthread_mutex_unlock(&accept_req);
+        pthread_mutex_lock(&queue_lock);
+        queueRemove(wait_q, connfd);
+        pthread_mutex_unlock(&queue_lock);
         // Critical part end
     }
     return NULL;
+}
+
+int isFull(int queue_size)
+{
+    return (queueGetSize(busy_q) + queueGetSize(wait_q)) == queue_size;
 }
 
 int main(int argc, char *argv[])
@@ -205,5 +212,47 @@ int main(int argc, char *argv[])
         // Add connfd to wait_q
         // If there is available thread(?)- send signal
         // If queues are full- handel according to schedalg
+
+        pthread_mutex_lock(&queue_lock);
+        // assuming "block" for now:
+        if (isFull(queue_size))
+        {
+            switch (schedalg)
+            {
+            case SCH_BLOCK:
+                while (isFull(queue_size))
+                {
+                    pthread_cond_wait(&thread_ready_cond, &queue_lock);
+                }
+                break;
+            case SCH_DT:
+                Close(connfd);
+                connfd = FD_CLOSED;
+                break;
+            case SCH_DH:
+                if (!queueIsEmpty(wait_q))
+                {
+                    queuePop(wait_q);
+                }
+                break;
+            case SCH_RANDOM:
+                if (!queueIsEmpty(wait_q))
+                {
+                    // The amount to drop is based on ALL requests
+                    // But- they are dropped only from wait_q
+                    int total = queueGetSize(wait_q) + queueGetSize(busy_q);
+                    int amount = total * DROP_PERCENT;
+                    queueDropAmountRandomly(amount);
+                }
+                break;
+            default:
+                break;
+            }
+        }
+        if (connfd != FD_CLOSED)
+        {
+            queuePushBack(wait_q, connfd);
+            pthread_cond_signal(&req_ready_cond);
+        }
     }
 }
