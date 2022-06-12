@@ -7,11 +7,36 @@
 #include <stdlib.h>
 
 
-typedef struct queue *queue;
-typedef struct node *node; 
+typedef struct Queue *Queue;
+typedef struct Node *Node; 
 
-node Create()
+// This is Node's methods right there:
 
+Node nodeCreate(int info);
+
+int getInfo(Node orig);
+
+int getTime(Node orig);
+
+Node setNext(Node orig, Node next);
+
+Node getNext(Node orig);
+
+// Those are Queue's methods mortyyyyy
+
+Queue queueCreate(int max_size);
+
+bool queueIsEmpty(Queue queue);
+
+bool queueIsFull(Queue queue);
+
+int queueGetBack(Queue queue);
+
+void queuePushBack(Queue queue, int info);
+
+void queueRemove(int to_remove);
+
+void queueDestroy(Queue queue);
 
 
 #endif //QUEUE_H
