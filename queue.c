@@ -1,9 +1,10 @@
 #include "queue.h"
+#include <time.h>
 
 struct Node {
     time_t time;
     int info;
-    node next;
+    Node next;
 };
 
 struct Queue {
@@ -14,7 +15,7 @@ struct Queue {
 
 Node nodeCreate(int info) {
     Node node = (Node)malloc(sizeof(*node));
-    node->time = time(NULL); 
+    time(&node->time); 
     node->info = info;
     node->next = NULL;
     printf("Created node %d\n", info);
@@ -51,11 +52,11 @@ Queue queueCreate(int max_size) {
     return queue;
 }
 
-Queue queueIsEmpty(Queue queue) {
+bool queueIsEmpty(Queue queue) {
     return queue->size == 0; 
 }
 
-Queue queueIsFull(Queue queue) {
+bool queueIsFull(Queue queue) {
     return queue->size == queue->max;
 }
 
@@ -66,25 +67,25 @@ int queueGetBack(Queue queue) {
     }
     Node temp = queue->last;
     Node old_node = queue->last;
-    temp = temp->getNext();
+    temp = getNext(temp);
     while(temp != NULL) {
         if(temp->time < old_node->time) {
             old_node = temp;
         }
-        temp = temp.getNext();
+        temp = getNext(temp);
     }
     int result = old_node->info;
-    queueRemove(queue, old_node);
+    queueRemove(queue, result);
     return result;
 }
 
 void queuePushBack(Queue queue, int info) {
-    if(queueIsFull()) {
+    if(queueIsFull(queue)) {
         return;
     }
 
     Node new_node = nodeCreate(info);
-    if(queueIsEmpty()) {
+    if(queueIsEmpty(queue)) {
         queue->last = new_node;
     }
     else {
@@ -97,7 +98,7 @@ void queuePushBack(Queue queue, int info) {
 
 }
 
-void queueRemove(int to_remove) {
+void queueRemove(Queue queue, int to_remove) {
     if(queueIsEmpty(queue)) {
         return;
     }
@@ -111,11 +112,11 @@ void queueRemove(int to_remove) {
         to_delete = getNext(to_delete);
         while(to_delete != NULL) {
             if(to_delete->info == to_remove) {
-                setNext(previous, to_delete->getNext());
+                setNext(previous, getNext(to_delete));
                 break;
             }
-            to_delete = to_delete.getNext();
-            previous = previous.getNext();
+            to_delete = getNext(to_delete);
+            previous = getNext(previous);
         }
     }
     free(to_delete);
@@ -132,4 +133,12 @@ void queueDestroy(Queue queue) {
         temp = next;
     }
     free(queue);
+}
+
+void queuePrint(Queue queue) {
+    Node temp = queue->last;
+    while(temp != NULL) {
+        printf("%d, ", temp->info);
+        temp = getNext(temp);
+    }
 }

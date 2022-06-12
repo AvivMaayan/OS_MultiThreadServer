@@ -34,9 +34,10 @@ int queueGetBack(Queue queue);
 
 void queuePushBack(Queue queue, int info);
 
-void queueRemove(int to_remove);
+void queueRemove(Queue queue, int to_remove);
 
 void queueDestroy(Queue queue);
 
+void queuePrint(Queue queue);
 
 #endif //QUEUE_H
