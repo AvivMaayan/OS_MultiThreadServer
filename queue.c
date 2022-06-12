@@ -143,7 +143,41 @@ void queuePrint(Queue queue) {
     }
 }
 
-void queueDropAmountRandomly(Queue queue)
+void queueRemoveByPlace(Queue queue, int place) {
+    if(queueIsEmpty(queue) || queue->size < place) {
+        return;
+    }
+    Node previous = queue->last;
+    Node to_delete = queue->last;
+    int counter = 1;
+    if(place == counter) {
+        // the last is the one to remove. 
+        queue->last = getNext(queue->last);
+    }
+    else {
+        to_delete = getNext(to_delete);
+        counter++;
+        while(to_delete != NULL && counter < place) {
+            to_delete = getNext(to_delete);
+            previous = getNext(previous);
+            counter++;
+        }
+        if(counter == place) {
+            setNext(previous, getNext(to_delete));
+        }
+    }
+    free(to_delete);
+    queue->size--;
+}
+
+void queueDropAmountRandomly(Queue queue, int amount)
 {
-    
+    if(amount > queue->size) {
+        amount = queue->size;
+        printf("PROBLEM! Trying to delete too many!");
+    }
+    for (int i = 0; i < amount; i++) {
+        int rand_loc = rand() % (queue->size) + 1;
+        queueRemoveByPlace(queue, rand_loc);
+    }
 }
