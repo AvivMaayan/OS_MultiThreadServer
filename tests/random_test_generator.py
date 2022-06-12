@@ -46,7 +46,7 @@ for i in list(range(num_of_comm)):
         final += str(random_sleep())
 
     else:
-        final += " doesn't exist"
+        final += " doesn't_exist"
     final_bytes = str.encode(final)
     os.write(f, final_bytes)
     os.write(f, str.encode("\n"))

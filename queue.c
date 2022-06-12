@@ -142,3 +142,8 @@ void queuePrint(Queue queue) {
         temp = getNext(temp);
     }
 }
+
+void queueDropAmountRandomly(Queue queue)
+{
+    
+}

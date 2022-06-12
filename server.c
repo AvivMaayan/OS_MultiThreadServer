@@ -243,7 +243,7 @@ int main(int argc, char *argv[])
                     // But- they are dropped only from wait_q
                     int total = queueGetSize(wait_q) + queueGetSize(busy_q);
                     int amount = total * DROP_PERCENT;
-                    queueDropAmountRandomly(amount);
+                    queueDropAmountRandomly(wait_q, amount);
                 }
                 break;
             default:
@@ -252,7 +252,7 @@ int main(int argc, char *argv[])
         }
         if (connfd != FD_CLOSED)
         {
-            queuePushBack(wait_q, connfd);
+            queuePush(wait_q, connfd);
             pthread_cond_signal(&req_ready_cond);
         }
     }

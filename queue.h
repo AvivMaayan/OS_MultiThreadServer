@@ -40,4 +40,6 @@ void queueDestroy(Queue queue);
 
 void queuePrint(Queue queue);
 
+void queueDropAmountRandomly(Queue queue);
+
 #endif //QUEUE_H
