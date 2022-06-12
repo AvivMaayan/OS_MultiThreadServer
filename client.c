@@ -81,6 +81,7 @@ void clientPrint(int fd)
 
 int readSendCommand(int clientfd)
 {
+  char EOL = "\n";
   char buffer[MAXLINE];
   int a[MAXLINE];
   int i = 0;
