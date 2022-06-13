@@ -37,9 +37,12 @@ void clientSend(int fd, char *filename)
   Gethostname(hostname, MAXLINE);
 
   /* Form and send the HTTP request */
+  sprintf(buf, "GET %s HTTP/1.1 %s\n\r\n", filename, hostname);
+  Rio_writen(fd, buf, strlen(buf));
+  /*
   sprintf(buf, "GET %s HTTP/1.1\n", filename);
   sprintf(buf, "%shost: %s\n\r\n", buf, hostname);
-  Rio_writen(fd, buf, strlen(buf));
+  */
 }
 
 /*
