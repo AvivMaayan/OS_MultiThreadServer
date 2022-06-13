@@ -84,15 +84,17 @@ void clientPrint(int fd)
 void *print_m(void *fd)
 {
   // cast the thread argument
-  int *clientfd = (int *)fd;
+  // int *clientfd = (int *)fd;
   printf("I'm a thread! PID = %d, pthread ID = %ld\n",
          getpid(), pthread_self());
   char a[MAXLINE];
   char b[MAXLINE];
   scanf("%2000s %2000[^\n]", a, b);
-  // printf("%s\n", a);
-  clientSend(*clientfd, a);
-  clientPrint(*clientfd);
+  printf("%s\n", a);
+  int clientfd = Open_clientfd("localhost", 2003);
+  clientSend(clientfd, a);
+  clientPrint(clientfd);
+  Close(clientfd);
   printf("Thread number %ld is DEAD!!\n", pthread_self());
   pthread_exit(NULL);
   return NULL;
@@ -107,17 +109,16 @@ int main()
   int result, num_of_threads;
   host = "localhost";
   port = 2003;
-  num_of_threads = 10;
+  num_of_threads = 30;
 
   // open a new entry for the relevant port in the FDT
-  clientfd = Open_clientfd(host, port);
   FILE *file = freopen("test_me.txt", "r", stdin);
   int fd = fileno(file);
   // create threads in a for loop and let them execute next line in the file
   // threads share FDT's
   for (int i = 0; i < num_of_threads; i++)
   {
-    result = pthread_create(t+i, NULL, print_m, &fd);
+    result = pthread_create(t+i, NULL, print_m, &clientfd);
     if (result)
     {
       printf("Error:unable to create thread number %d", i);
@@ -127,7 +128,7 @@ int main()
   for(int i=0; i<num_of_threads; i++) {
     pthread_join(t[i], NULL);
   }
-  Close(clientfd);
+  
   Close(fd);
   return 0;
 }
