@@ -113,7 +113,6 @@ void requestGetFiletype(char *filename, char *filetype)
 void requestAddStats(int fd, char *buf, struct stat_s *stats)
 {
    DEBUG_PRINTF("thread: requestAddStats\n");
-   DEBUG_PRINTF("%d\n", stats->handler_thread_id);
    sprintf(buf, "%sStat-Req-Arrival:: %lu.%06lu\r\n", buf, stats->arrival_time.tv_sec, stats->arrival_time.tv_usec);
    sprintf(buf, "%sStat-Req-Dispatch:: %lu.%06lu\r\n", buf, stats->dispatch_interval.tv_sec, stats->dispatch_interval.tv_usec);
    sprintf(buf, "%sStat-Thread-Id:: %d\r\n", buf, stats->handler_thread_id);
