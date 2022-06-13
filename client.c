@@ -108,7 +108,7 @@ int main()
   pthread_t t[10];
   int result, num_of_threads;
   host = "localhost";
-  port = 2003;
+  port = 2004;
   num_of_threads = 30;
 
   // open a new entry for the relevant port in the FDT

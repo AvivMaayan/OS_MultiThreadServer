@@ -95,7 +95,9 @@ struct timeval queueGetTime(Queue queue) {
 struct timeval create_time(Queue queue) {
     if(queueIsEmpty(queue))
         return (struct timeval){0};
-    return queue->first->time;
+    struct timeval temp;
+    gettimeofday(&temp, NULL);
+    return temp;
 }
 
 void queuePush(Queue queue, int info) {
