@@ -20,7 +20,7 @@ Node nodeCreate(int info, struct timeval _time) {
     node->info = info;
     node->next = NULL;
     node->time = _time;
-    printf("Created node %d\n", info);
+    DEBUG_PRINTF("Created node %d\n", info);
     return node;
 }
 
@@ -51,7 +51,7 @@ Queue queueCreate(int max_size) {
     queue->max = max_size;
     queue->last = NULL;
     queue->first = NULL;
-    printf("Created queue with max size %d\n", max_size);
+    DEBUG_PRINTF("Created queue with max size %d\n", max_size);
     return queue;
 }
 
@@ -113,7 +113,7 @@ void queuePush(Queue queue, int info) {
         queue->last = new_node;
         setNext(queue->last, temp);
     }
-    printf("Queue added %d\n", info);
+    DEBUG_PRINTF("Queue added %d\n", info);
     queue->size++;
 
 }
@@ -148,7 +148,7 @@ void queueRemove(Queue queue, int to_remove) {
     }
     free(to_delete);
     queue->size--;
-    printf("Queue removed %d\n", to_remove);
+    DEBUG_PRINTF("Queue removed %d\n", to_remove);
 }
 
 void queueDestroy(Queue queue) {
@@ -165,7 +165,7 @@ void queueDestroy(Queue queue) {
 void queuePrint(Queue queue) {
     Node temp = queue->last;
     while(temp != NULL) {
-        printf("%d, ", temp->info);
+        DEBUG_PRINTF("%d, ", temp->info);
         temp = getNext(temp);
     }
 }
@@ -206,7 +206,7 @@ void queueDropAmountRandomly(Queue queue, int amount)
 {
     if(amount > queue->size) {
         amount = queue->size;
-        printf("PROBLEM! Trying to delete too many!");
+        DEBUG_PRINTF("PROBLEM! Trying to delete too many!");
     }
     for (int i = 0; i < amount; i++) {
         int rand_loc = rand() % (queue->size) + 1;

@@ -24,6 +24,11 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 
+#ifdef DEBUG
+    #define DEBUG_PRINTF(...) printf("DEBUG: "__VA_ARGS__)
+#else
+    #define DEBUG_PRINTF(...) do {} while (0)
+#endif
 
 /* Default file permissions are DEF_MODE & ~DEF_UMASK */
 /* $begin createmasks */

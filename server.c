@@ -40,13 +40,13 @@ void *serviceRequests(void *thread_id_ptr);
 
 void initThreadArrays(int threads_num, pthread_t **threads, int **thread_ids)
 {
-    *threads = malloc(threads_num * sizeof(**threads));
+    *threads = (pthread_t *)malloc(threads_num * sizeof(**threads));
     if (!*threads)
     {
         fprintf(stderr, "Failed to allocate threads array");
         exit(1);
     }
-    *thread_ids = malloc(threads_num * sizeof(**thread_ids));
+    *thread_ids = (int *)malloc(threads_num * sizeof(**thread_ids));
     if (!*thread_ids)
     {
         free(*threads);
@@ -55,7 +55,7 @@ void initThreadArrays(int threads_num, pthread_t **threads, int **thread_ids)
     }
     for (int i = 0; i < threads_num; i++)
     {
-        *thread_ids[i] = i;
+        (*thread_ids)[i] = i;
         if (pthread_create(*threads + i, NULL, serviceRequests, (void *)(*thread_ids + i)))
         {
             free(*threads);
@@ -141,6 +141,7 @@ void getArgs(int *port_num, int *threads_num, int *queue_size, sched_alg_t *sche
 
 void *serviceRequests(void *thread_id_ptr)
 {
+    DEBUG_PRINTF("serviceRequests\n");
     int thread_id = *(int *)thread_id_ptr;
     while (1)
     {
@@ -155,10 +156,12 @@ void *serviceRequests(void *thread_id_ptr)
             pthread_cond_wait(&req_ready_cond, &queue_lock);
             // Critical part end + start
         }
+        DEBUG_PRINTF("serviceRequests: got signal\n");
         int connfd = queueGetFD(wait_q);
         thread_stats[thread_id][STAT_TOTAL]++;
 
         // Filling in stats
+        DEBUG_PRINTF("serviceRequests: Filling in stats\n");
         stats.arrival_time = queueGetTime(wait_q);
         queuePop(wait_q);
         gettimeofday(&stats.service_time, NULL);
@@ -175,13 +178,15 @@ void *serviceRequests(void *thread_id_ptr)
         // Critical part end
 
         req_handle_res res = requestHandle(connfd, &stats);
+        DEBUG_PRINTF("serviceRequests: Handle, update stats and close\n");
         if (res == REQ_STATIC) thread_stats[thread_id][STAT_STATIC]++;
         else if (res == REQ_DYNAMIC) thread_stats[thread_id][STAT_DYNAMIC]++;
         Close(connfd);
 
+        DEBUG_PRINTF("serviceRequests: remove from busy_q\n");
         // Critical part start
         pthread_mutex_lock(&queue_lock);
-        queueRemove(wait_q, connfd);
+        queueRemove(busy_q, connfd);
         pthread_mutex_unlock(&queue_lock);
         // Critical part end
     }
@@ -195,14 +200,19 @@ int isFull(int queue_size)
 
 int main(int argc, char *argv[])
 {
+    DEBUG_PRINTF("Server: main\n");
+    
     int listenfd, connfd, port, threads_num, queue_size, clientlen;
     struct sockaddr_in clientaddr;
     sched_alg_t schedalg;
     pthread_t *threads;
     int *thread_ids;
 
+    DEBUG_PRINTF("Server: getArgs\n");
     getArgs(&port, &threads_num, &queue_size, &schedalg, argc, argv);
+    DEBUG_PRINTF("Server: initThreadArrays\n");
     initThreadArrays(threads_num, &threads, &thread_ids);
+    DEBUG_PRINTF("Server: initQueues\n");
     if (initQueues(threads_num, queue_size))
     {
         free(threads);
@@ -211,6 +221,7 @@ int main(int argc, char *argv[])
         fprintf(stderr, "Failed to Initialize queues");
         exit(1);
     }
+    DEBUG_PRINTF("Server: initLocks\n");
     if (initLocks())
     {
         free(threads);
@@ -221,7 +232,7 @@ int main(int argc, char *argv[])
         fprintf(stderr, "Failed to Initialize locks and conditions");
         exit(1);
     }
-
+    DEBUG_PRINTF("Server: listen loop\n");
     // Start listening to port
     listenfd = Open_listenfd(port);
     while (1)
@@ -229,14 +240,10 @@ int main(int argc, char *argv[])
         clientlen = sizeof(clientaddr);
         connfd = Accept(listenfd, (SA *)&clientaddr, (socklen_t *)&clientlen);
 
-        // Add connfd to wait_q
-        // If there is available thread(?)- send signal
-        // If queues are full- handel according to schedalg
-
         pthread_mutex_lock(&queue_lock);
-        // assuming "block" for now:
         if (isFull(queue_size))
         {
+            DEBUG_PRINTF("Server: isFull\n");
             switch (schedalg)
             {
             case SCH_BLOCK:
@@ -271,8 +278,12 @@ int main(int argc, char *argv[])
         }
         if (connfd != FD_CLOSED)
         {
+            DEBUG_PRINTF("Server: Add to queue\n");
             queuePush(wait_q, connfd);
+            DEBUG_PRINTF("Server: send signal\n");
             pthread_cond_signal(&req_ready_cond);
         }
+        pthread_mutex_unlock(&queue_lock);
     }
+    return 0;
 }

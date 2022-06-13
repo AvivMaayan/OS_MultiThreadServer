@@ -173,6 +173,7 @@ void requestServeStatic(int fd, char *filename, int filesize)
 // handle a request
 req_handle_res requestHandle(int fd, struct stat_s *stats)
 {
+   DEBUG_PRINTF("requestHandle\n");
    int is_static;
    struct stat sbuf;
    char buf[MAXLINE], method[MAXLINE], uri[MAXLINE], version[MAXLINE];
@@ -185,6 +186,7 @@ req_handle_res requestHandle(int fd, struct stat_s *stats)
 
    printf("%s %s %s\n", method, uri, version);
 
+   DEBUG_PRINTF("requestHandle: GET check\n");
    if (strcasecmp(method, "GET"))
    {
       requestError(fd, method, "501", "Not Implemented", "OS-HW3 Server does not implement this method");
@@ -192,6 +194,7 @@ req_handle_res requestHandle(int fd, struct stat_s *stats)
    }
    requestReadhdrs(&rio);
 
+   DEBUG_PRINTF("requestHandle: static check\n");
    is_static = requestParseURI(uri, filename, cgiargs);
    if (stat(filename, &sbuf) < 0)
    {

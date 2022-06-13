@@ -6,9 +6,9 @@ OBJS = server.o request.o segel.o client.o queue.o
 TARGET = server
 
 CC = gcc
-CFLAGS = -g -Wall
+CFLAGS = -Wall -g -DDEBUG
 
-LIBS = -lpthread 
+LIBS = -lpthread -lm
 
 .SUFFIXES: .c .o 
 
