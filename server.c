@@ -141,7 +141,6 @@ void getArgs(int *port_num, int *threads_num, int *queue_size, sched_alg_t *sche
 
 void *serviceRequests(void *thread_id_ptr)
 {
-    DEBUG_PRINTF("serviceRequests\n");
     int thread_id = *(int *)thread_id_ptr;
     while (1)
     {
@@ -156,12 +155,12 @@ void *serviceRequests(void *thread_id_ptr)
             pthread_cond_wait(&req_ready_cond, &queue_lock);
             // Critical part end + start
         }
-        DEBUG_PRINTF("serviceRequests: got signal\n");
+        DEBUG_PRINTF("thread: got signal\n");
         int connfd = queueGetFD(wait_q);
         thread_stats[thread_id][STAT_TOTAL]++;
 
         // Filling in stats
-        DEBUG_PRINTF("serviceRequests: Filling in stats\n");
+        DEBUG_PRINTF("thread: Filling in stats\n");
         stats.arrival_time = queueGetTime(wait_q);
         queuePop(wait_q);
         gettimeofday(&stats.service_time, NULL);
@@ -178,12 +177,12 @@ void *serviceRequests(void *thread_id_ptr)
         // Critical part end
 
         req_handle_res res = requestHandle(connfd, &stats);
-        DEBUG_PRINTF("serviceRequests: Handle, update stats and close\n");
+        DEBUG_PRINTF("thread: Handle, update stats and close\n");
         if (res == REQ_STATIC) thread_stats[thread_id][STAT_STATIC]++;
         else if (res == REQ_DYNAMIC) thread_stats[thread_id][STAT_DYNAMIC]++;
         Close(connfd);
 
-        DEBUG_PRINTF("serviceRequests: remove from busy_q\n");
+        DEBUG_PRINTF("thread: remove from busy_q\n");
         // Critical part start
         pthread_mutex_lock(&queue_lock);
         queueRemove(busy_q, connfd);
