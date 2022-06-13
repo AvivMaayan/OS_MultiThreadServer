@@ -93,8 +93,6 @@ struct timeval queueGetTime(Queue queue) {
 }
 
 struct timeval create_time(Queue queue) {
-    if(queueIsEmpty(queue))
-        return (struct timeval){0};
     struct timeval temp;
     gettimeofday(&temp, NULL);
     return temp;

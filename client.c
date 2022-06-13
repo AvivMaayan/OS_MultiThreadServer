@@ -81,44 +81,49 @@ void clientPrint(int fd)
  * my new stuff
  */
 
-void *print_m(void *fd)
+void *print_m(void *prt)
 {
   // cast the thread argument
-  // int *clientfd = (int *)fd;
-  printf("I'm a thread! PID = %d, pthread ID = %ld\n",
+  int *port = (int *)prt;
+  DEBUG_PRINTF("I'm a thread! PID = %d, pthread ID = %ld\n",
          getpid(), pthread_self());
   char a[MAXLINE];
   char b[MAXLINE];
   scanf("%2000s %2000[^\n]", a, b);
-  printf("%s\n", a);
-  int clientfd = Open_clientfd("localhost", 2003);
+  int clientfd = Open_clientfd("localhost", *port);
   clientSend(clientfd, a);
   clientPrint(clientfd);
   Close(clientfd);
-  printf("Thread number %ld is DEAD!!\n", pthread_self());
+  DEBUG_PRINTF("Thread number %ld is DEAD!!\n", pthread_self());
   pthread_exit(NULL);
   return NULL;
 }
 
-int main()
+int main(int argc, char *argv[])
 {
   char *host;
   int port;
   int clientfd;
-  pthread_t t[10];
   int result, num_of_threads;
   host = "localhost";
-  port = 2004;
-  num_of_threads = 30;
+  if (argc != 3)
+  {
+    fprintf(stderr, "Usage: %s <port> <num_of_requests>\n", argv[0]);
+    exit(1);
+  }
+  port = atoi(argv[1]);
+  num_of_threads = atoi(argv[2]);
+  pthread_t *t = (pthread_t*)malloc(sizeof(pthread_t)*num_of_threads);
 
   // open a new entry for the relevant port in the FDT
   FILE *file = freopen("test_me.txt", "r", stdin);
   int fd = fileno(file);
   // create threads in a for loop and let them execute next line in the file
   // threads share FDT's
+
   for (int i = 0; i < num_of_threads; i++)
   {
-    result = pthread_create(t+i, NULL, print_m, &clientfd);
+    result = pthread_create(t+i, NULL, print_m, &port);
     if (result)
     {
       printf("Error:unable to create thread number %d", i);
@@ -130,6 +135,7 @@ int main()
   }
   
   Close(fd);
+  free(t);
   return 0;
 }
 
