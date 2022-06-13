@@ -30,7 +30,7 @@ if(os.path.isfile("test_me.txt")):
 else :
     f = os.open("test_me.txt", os.O_RDWR | os.O_CREAT)
 
-num_of_comm = 30
+num_of_comm = 100
 
 final = ""
 for i in list(range(num_of_comm)):
