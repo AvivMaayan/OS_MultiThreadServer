@@ -170,9 +170,9 @@ void queuePrint(Queue queue) {
     }
 }
 
-void queueRemoveByPlace(Queue queue, int place) {
+int queueRemoveByPlace(Queue queue, int place) {
     if(queueIsEmpty(queue) || queue->size < place) {
-        return;
+        return -1;
     }
     Node previous = queue->last;
     Node to_delete = queue->last;
@@ -197,9 +197,10 @@ void queueRemoveByPlace(Queue queue, int place) {
                 }
         }
     }
+    int info = to_delete->info;
     free(to_delete);
     queue->size--;
-
+    return info;
 }
 
 void queueDropAmountRandomly(Queue queue, int amount)

@@ -104,11 +104,8 @@ void *print_m(void *prt)
 
 int main(int argc, char *argv[])
 {
-  char *host;
   int port;
-  int clientfd;
   int result, num_of_threads;
-  host = "localhost";
   if (argc != 3)
   {
     fprintf(stderr, "Usage: %s <port> <num_of_requests>\n", argv[0]);

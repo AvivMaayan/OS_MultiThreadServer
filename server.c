@@ -124,19 +124,20 @@ void getArgs(int *port_num, int *threads_num, int *queue_size, sched_alg_t *sche
     *threads_num = atoi(argv[2]);
     *queue_size = atoi(argv[3]);
     char *alg = argv[4];
-    if (strcmp(alg, "block"))
+    if (!strcmp(alg, "block"))
         *schedalg = SCH_BLOCK;
-    else if (strcmp(alg, "dt"))
+    else if (!strcmp(alg, "dt"))
         *schedalg = SCH_DT;
-    else if (strcmp(alg, "dh"))
+    else if (!strcmp(alg, "dh"))
         *schedalg = SCH_DH;
-    else if (strcmp(alg, "random"))
+    else if (!strcmp(alg, "random"))
         *schedalg = SCH_RANDOM;
     else
     {
         fprintf(stderr, "%s is not a recognized sched alg\n", alg);
         exit(1);
     }
+    DEBUG_PRINTF("argv[4] is: %s, Alg is: %d\n",argv[4], *schedalg);
 }
 
 void *serviceRequests(void *thread_id_ptr)
@@ -178,8 +179,10 @@ void *serviceRequests(void *thread_id_ptr)
 
         req_handle_res res = requestHandle(connfd, &stats);
         DEBUG_PRINTF("thread: Handle, update stats and close\n");
-        if (res == REQ_STATIC) thread_stats[thread_id][STAT_STATIC]++;
-        else if (res == REQ_DYNAMIC) thread_stats[thread_id][STAT_DYNAMIC]++;
+        if (res == REQ_STATIC)
+            thread_stats[thread_id][STAT_STATIC]++;
+        else if (res == REQ_DYNAMIC)
+            thread_stats[thread_id][STAT_DYNAMIC]++;
         Close(connfd);
 
         DEBUG_PRINTF("thread: remove from busy_q\n");
@@ -194,13 +197,13 @@ void *serviceRequests(void *thread_id_ptr)
 
 int isFull(int queue_size)
 {
-    return (queueGetSize(busy_q) + queueGetSize(wait_q)) == queue_size;
+    return (queueGetSize(busy_q) + queueGetSize(wait_q)) >= queue_size;
 }
 
 int main(int argc, char *argv[])
 {
     DEBUG_PRINTF("Server: main\n");
-    
+
     int listenfd, connfd, port, threads_num, queue_size, clientlen;
     struct sockaddr_in clientaddr;
     sched_alg_t schedalg;
@@ -246,29 +249,52 @@ int main(int argc, char *argv[])
             switch (schedalg)
             {
             case SCH_BLOCK:
+                DEBUG_PRINTF("Case Block\n");
                 while (isFull(queue_size))
                 {
                     pthread_cond_wait(&thread_ready_cond, &queue_lock);
                 }
                 break;
             case SCH_DT:
+                DEBUG_PRINTF("Case Dt\n");
                 Close(connfd);
                 connfd = FD_CLOSED;
                 break;
             case SCH_DH:
+                DEBUG_PRINTF("Case Dh\n");
                 if (!queueIsEmpty(wait_q))
                 {
+                    int fd_to_close = queueGetFD(wait_q);
                     queuePop(wait_q);
+                    Close(fd_to_close);
+                }
+                else
+                {
+                    Close(connfd);
+                    connfd = FD_CLOSED;
                 }
                 break;
             case SCH_RANDOM:
+                DEBUG_PRINTF("Case Rand\n");
                 if (!queueIsEmpty(wait_q))
                 {
-                    // The amount to drop is based on ALL requests
-                    // But- they are dropped only from wait_q
-                    int total = queueGetSize(wait_q) + queueGetSize(busy_q);
-                    int amount = total * DROP_PERCENT;
-                    queueDropAmountRandomly(wait_q, amount);
+                    int amount = (int)ceil(queueGetSize(wait_q) * DROP_PERCENT);
+                    //queueDropAmountRandomly(wait_q, amount);
+                    if (amount > queueGetSize(wait_q))
+                    {
+                        amount = queueGetSize(wait_q);
+                        DEBUG_PRINTF("PROBLEM! Trying to delete too many!");
+                    }
+                    for (int i = 0; i < amount; i++)
+                    {
+                        int rand_loc = rand() % (queueGetSize(wait_q)) + 1;
+                        Close(queueRemoveByPlace(wait_q, rand_loc));
+                    }
+                }
+                else
+                {
+                    Close(connfd);
+                    connfd = FD_CLOSED;
                 }
                 break;
             default:

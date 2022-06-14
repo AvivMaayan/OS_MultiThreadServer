@@ -47,6 +47,8 @@ void queueDestroy(Queue queue);
 
 void queuePrint(Queue queue);
 
+int queueRemoveByPlace(Queue queue, int place);
+
 void queueDropAmountRandomly(Queue queue, int amount);
 
 #endif //QUEUE_H

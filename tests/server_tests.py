@@ -4,10 +4,12 @@ import time
 import unittest
 import subprocess as sp
 import asyncio
+import time
 import requests_async as requests
 from h11 import RemoteProtocolError
 
-SERVER_PATH = os.path.realpath(os.path.join(os.path.curdir, '..', 'server'))
+# SERVER_PATH = os.path.realpath(os.path.join(os.path.curdir, '..', 'server'))
+SERVER_PATH = "/home/student/Desktop/OS/hw3/webserver-files/server"
 DYNAMIC_REQ_TIME = 0.2
 DEFAULT_PORT = 8080
 DEFAULT_THREAD_COUNT = 3
@@ -266,7 +268,6 @@ class TestStatusCodes(RequestsTest):
             'stat-thread-dynamic': 1
         }
         asyncio.run(self._make_req(self.dyn_url, 200, stat_map))
-
     def test_static(self):
         stat_map = {
             'stat-req-arrival': None,

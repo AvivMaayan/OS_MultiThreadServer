@@ -12,7 +12,7 @@ void requestAddStats(char *buf, struct stat_s *stats)
    sprintf(buf, "%sStat-Thread-Id:: %d\r\n", buf, stats->handler_thread_id);
    sprintf(buf, "%sStat-Thread-Count:: %d\r\n", buf, stats->handler_thread_req_count);
    sprintf(buf, "%sStat-Thread-Static:: %d\r\n", buf, stats->handler_thread_static_req_count);
-   sprintf(buf, "%sStat-Thread-Dynamic:: %d\r\n", buf,stats->handler_thread_dynamic_req_count);
+   sprintf(buf, "%sStat-Thread-Dynamic:: %d\r\n\r\n", buf,stats->handler_thread_dynamic_req_count);
 }
 
 // requestError(      fd,    filename,        "404",    "Not found", "OS-HW3 Server could not find this file");
@@ -38,11 +38,14 @@ void requestError(int fd, char *cause, char *errnum, char *shortmsg, char *longm
    Rio_writen(fd, buf, strlen(buf));
    printf("%s", buf);
 
-   sprintf(buf, "Content-Length: %lu\r\n\r\n", strlen(body));
+   sprintf(buf, "Content-Length: %lu\r\n", strlen(body));
    Rio_writen(fd, buf, strlen(buf));
    printf("%s", buf);
 
+   //sprintf(buf, "");
+   buf[0] = 0;
    requestAddStats(buf, stats);
+   Rio_writen(fd, buf, strlen(buf));
 
    // Write out the content
    Rio_writen(fd, body, strlen(body));
