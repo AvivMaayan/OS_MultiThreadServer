@@ -37,20 +37,22 @@ Queue busy_q, wait_q;
 
 void *serviceRequests(void *thread_id_ptr);
 
-void initThreadArrays(int threads_num, pthread_t **threads, int **thread_ids)
+// Initializes queues.
+// In case of failure returns 1
+int initThreadArrays(int threads_num, pthread_t **threads, int **thread_ids)
 {
     *threads = (pthread_t *)malloc(threads_num * sizeof(**threads));
     if (!*threads)
     {
         fprintf(stderr, "Failed to allocate threads array");
-        exit(1);
+        return 1;
     }
     *thread_ids = (int *)malloc(threads_num * sizeof(**thread_ids));
     if (!*thread_ids)
     {
         free(*threads);
         fprintf(stderr, "Failed to allocate thread ids array");
-        exit(1);
+        return 1;
     }
     for (int i = 0; i < threads_num; i++)
     {
@@ -60,7 +62,7 @@ void initThreadArrays(int threads_num, pthread_t **threads, int **thread_ids)
             free(*threads);
             free(*thread_ids);
             fprintf(stderr, "Failed to create thread #%d", i);
-            exit(1);
+            return 1;
         }
     }
     thread_stats = malloc(threads_num * sizeof(*thread_stats));
@@ -70,7 +72,7 @@ void initThreadArrays(int threads_num, pthread_t **threads, int **thread_ids)
         free(*thread_ids);
         // TODO Kill threads
         fprintf(stderr, "Failed to allocate STAT table");
-        exit(1);
+        return 1;
     }
     for (int i = 0; i < threads_num; i++)
     {
@@ -86,9 +88,10 @@ void initThreadArrays(int threads_num, pthread_t **threads, int **thread_ids)
                 free(thread_stats[i]);
             }
             fprintf(stderr, "Failed to allocate STAT table entry");
-            exit(1);
+            return 1;
         }
     }
+    return 0;
 }
 
 // Initializes queues.
@@ -153,10 +156,15 @@ void *serviceRequests(void *thread_id_ptr)
             // Critical part end + start
         }
         DEBUG_PRINTF("thread: got signal\n");
+        /*
         int connfd = queueGetFD(wait_q);
         stats.arrival_time = queueGetTime(wait_q);
         queuePop(wait_q);
-        queuePush(busy_q, connfd, stats.service_time);        
+        */
+        stats.arrival_time = queueGetTime(wait_q);
+        int connfd = queuePop(wait_q);
+
+        queuePush(busy_q, connfd, stats.service_time);
         pthread_mutex_unlock(&queue_lock);
 
         thread_stats[thread_id][STAT_TOTAL]++;
@@ -179,8 +187,10 @@ void *serviceRequests(void *thread_id_ptr)
             thread_stats[thread_id][STAT_DYNAMIC]++;
 
         pthread_mutex_lock(&queue_lock);
-        queueRemove(busy_q, connfd);
+        // queueRemove(busy_q, connfd);
+        queueRemoveByPlace(busy_q, queueIndex(busy_q, connfd));
         pthread_cond_signal(&thread_ready_cond);
+
         pthread_mutex_unlock(&queue_lock);
     }
     return NULL;
@@ -203,26 +213,28 @@ int main(int argc, char *argv[])
 
     DEBUG_PRINTF("Server: getArgs\n");
     getArgs(&port, &threads_num, &queue_size, &schedalg, argc, argv);
-    DEBUG_PRINTF("Server: initThreadArrays\n");
-    initThreadArrays(threads_num, &threads, &thread_ids);
     DEBUG_PRINTF("Server: initQueues\n");
     if (initQueues(threads_num, queue_size))
     {
-        free(threads);
-        free(thread_ids);
-        // TODO Kill all threads
         fprintf(stderr, "Failed to Initialize queues");
         exit(1);
     }
     DEBUG_PRINTF("Server: initLocks\n");
     if (initLocks())
     {
-        free(threads);
-        free(thread_ids);
-        // TODO Kill all threads
         queueDestroy(busy_q);
         queueDestroy(wait_q);
         fprintf(stderr, "Failed to Initialize locks and conditions");
+        exit(1);
+    }
+    DEBUG_PRINTF("Server: initThreadArrays\n");
+    if (initThreadArrays(threads_num, &threads, &thread_ids))
+    {
+        queueDestroy(busy_q);
+        queueDestroy(wait_q);
+        pthread_mutex_destroy(&queue_lock);
+        pthread_cond_destroy(&thread_ready_cond);
+        pthread_cond_destroy(&req_ready_cond);
         exit(1);
     }
     DEBUG_PRINTF("Server: listen loop\n");
@@ -233,9 +245,9 @@ int main(int argc, char *argv[])
         clientlen = sizeof(clientaddr);
         connfd = Accept(listenfd, (SA *)&clientaddr, (socklen_t *)&clientlen);
         struct timeval arrival;
-        gettimeofday(&arrival, NULL); 
+        gettimeofday(&arrival, NULL);
         pthread_mutex_lock(&queue_lock);
-        
+
         if (isFull(queue_size))
         {
             DEBUG_PRINTF("Server: isFull\n");
@@ -257,9 +269,7 @@ int main(int argc, char *argv[])
                 DEBUG_PRINTF("Case Dh\n");
                 if (!queueIsEmpty(wait_q))
                 {
-                    int fd_to_close = queueGetFD(wait_q);
-                    queuePop(wait_q);
-                    Close(fd_to_close);
+                    Close(queuePop(wait_q));
                 }
                 else
                 {
@@ -271,8 +281,7 @@ int main(int argc, char *argv[])
                 DEBUG_PRINTF("Case Rand\n");
                 if (!queueIsEmpty(wait_q))
                 {
-                    int amount = (int)ceil((double)queueGetSize(wait_q) * DROP_PERCENT);
-                    // queueDropAmountRandomly(wait_q, amount);
+                    int amount = (int)(ceil(((double)(queueGetSize(wait_q))) * DROP_PERCENT));
                     if (amount > queueGetSize(wait_q))
                     {
                         amount = queueGetSize(wait_q);
@@ -280,7 +289,7 @@ int main(int argc, char *argv[])
                     }
                     for (int i = 0; i < amount; i++)
                     {
-                        int rand_loc = rand() % (queueGetSize(wait_q)) + 1;
+                        int rand_loc = rand() % (queueGetSize(wait_q));
                         Close(queueRemoveByPlace(wait_q, rand_loc));
                     }
                 }

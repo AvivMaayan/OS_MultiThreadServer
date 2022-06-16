@@ -1,0 +1,14 @@
+{
+    "makefile.extensionOutputFolder": "./.vscode",
+    "files.associations": {
+        "fcntl.h": "c"
+    },
+    "C_Cpp.default.configurationProvider": "ms-vscode.makefile-tools",
+    "makefile.launchConfigurations": [
+        {
+            "cwd": "/home/student/Desktop/OS/hw3/webserver-files",
+            "binaryPath": "/home/student/Desktop/OS/hw3/webserver-files/server",
+            "binaryArgs": []
+        }
+    ]
+}

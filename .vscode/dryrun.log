@@ -1,0 +1,14 @@
+make all --dry-run --always-make --keep-going --print-directory
+make: Entering directory '/home/student/Desktop/OS/hw3/webserver-files'
+gcc -g -Wall -o server.o -c server.c
+gcc -g -Wall -o request.o -c request.c
+gcc -g -Wall -o segel.o -c segel.c
+gcc -g -Wall -o queue.o -c queue.c
+gcc -g -Wall -o server server.o request.o segel.o queue.o -lpthread -lm
+gcc -g -Wall -o client.o -c client.c
+gcc -g -Wall -o client client.o segel.o
+gcc -g -Wall -o output.cgi output.c
+mkdir -p public
+cp output.cgi favicon.ico home.html public
+make: Leaving directory '/home/student/Desktop/OS/hw3/webserver-files'
+ 

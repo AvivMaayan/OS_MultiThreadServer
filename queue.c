@@ -252,7 +252,7 @@ int queueRemoveByPlace(Queue queue, int place)
     int info = to_delete->info;
     previous->next = to_delete->next;
     free(to_delete);
-    if(index == queue->size - 1){
+    if(place == queue->size - 1){
         queue->last = previous;
     }
     queue->size--;
