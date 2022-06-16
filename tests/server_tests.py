@@ -4,12 +4,16 @@ import time
 import unittest
 import subprocess as sp
 import asyncio
-import time
 import requests_async as requests
 from h11 import RemoteProtocolError
 
-# SERVER_PATH = os.path.realpath(os.path.join(os.path.curdir, '..', 'server'))
-SERVER_PATH = "/home/student/Desktop/OS/hw3/webserver-files/server"
+REQUEST_INTERVAL = 0
+STARTUP_DELAY = 0
+CONNECT_FAILED_DELAY = 0.2
+MAX_RETRIES = 3
+BOTTOM_SCALE = 2
+
+SERVER_PATH = os.path.realpath(os.path.join(os.path.curdir, '..', 'server'))
 DYNAMIC_REQ_TIME = 0.2
 DEFAULT_PORT = 8080
 DEFAULT_THREAD_COUNT = 3
@@ -43,6 +47,7 @@ class RequestsTest(unittest.TestCase):
         self.server_path = SERVER_PATH
         self.thread_count = thread_count
         self.policy = policy
+        self.connections_failed = 0
         if policy == 'random':
             self.per_drop_size = math.ceil(0.3 * (self.queue_size - self.thread_count))
         elif policy in ['dt', 'dh']:
@@ -58,7 +63,9 @@ class RequestsTest(unittest.TestCase):
         print(f'\tqueue size: {self.queue_size}')
         print(f'\tpolicy: {self.policy}')
         os.chdir(os.path.dirname(self.server_path))
+        self.connections_failed = 0
         self.server = sp.Popen([self.server_path, f'{DEFAULT_PORT}', f'{self.thread_count}', f'{self.queue_size}', self.policy])
+        time.sleep(STARTUP_DELAY)
         # input('Confirm open port and hit RETURN')
         # print('')
 
@@ -82,6 +89,10 @@ class RequestsTest(unittest.TestCase):
             # response_time = time.time() * 1000
             # self.assertAlmostEqual(arrival_time, float(response.headers['stat-req-arrival']), delta=min(500 * DYNAMIC_REQ_TIME, (response_time - arrival_time) * 0.2))
         except Exception as e:
+            if ("111" in str(e)) and (self.connections_failed < MAX_RETRIES):
+                time.sleep(CONNECT_FAILED_DELAY)
+                self.connections_failed += 1
+                return await self.make_req(url, method)
             r = RequestResult(req_ind=req_ind, e=e)
             return r
         else:
@@ -98,23 +109,28 @@ class RequestsTest(unittest.TestCase):
         expected_average_dispatch =  DYNAMIC_REQ_TIME * (float(total_reqs - expected_error_count) / self.thread_count) / 2
         if self.policy == 'random':
             for _ in range(total_reqs):
+                time.sleep(REQUEST_INTERVAL)
                 task = asyncio.ensure_future(self.make_req(url))
                 tasks.append(task)
         elif self.policy == 'dt':
             for _ in range(total_reqs - expected_error_count):
+                time.sleep(REQUEST_INTERVAL)
                 task = asyncio.ensure_future(self.make_req(url))
                 tasks.append(task)
 
             for _ in range(expected_error_count):
+                time.sleep(REQUEST_INTERVAL)
                 task = asyncio.ensure_future(self.make_req(url))
                 fail_expected_tasks.append(task)
 
         elif self.policy == 'dh':
             for _ in range(expected_error_count):
+                time.sleep(REQUEST_INTERVAL)
                 task = asyncio.ensure_future(self.make_req(url))
                 fail_expected_tasks.append(task)
 
             for _ in range(total_reqs - expected_error_count):
+                time.sleep(REQUEST_INTERVAL)
                 task = asyncio.ensure_future(self.make_req(url))
                 tasks.append(task)
 
@@ -218,7 +234,7 @@ class TestMultiThreaded(RequestsTest):
         start_time = time.time()
         req_count = self.max_reqs
         asyncio.run(self.make_requests(self.dyn_url, req_count))
-        few_threads_run_time = time.time() - start_time
+        few_threads_run_time = time.time() - start_time - self.connections_failed * CONNECT_FAILED_DELAY - req_count * REQUEST_INTERVAL
 
         self.server.terminate()
         self.thread_count *= 3
@@ -226,18 +242,20 @@ class TestMultiThreaded(RequestsTest):
 
         start_time = time.time()
         asyncio.run(self.make_requests(self.dyn_url, req_count))
-        more_threads_run_time = time.time() - start_time
-
-        self.assertTrue(2 * more_threads_run_time < few_threads_run_time < 3 * more_threads_run_time, "Performance doesn't scale as expected with amount of threads")
+        more_threads_run_time = time.time() - start_time - self.connections_failed * CONNECT_FAILED_DELAY - req_count * REQUEST_INTERVAL
+        self.assertTrue(BOTTOM_SCALE * more_threads_run_time < few_threads_run_time < 3 * more_threads_run_time, "Performance doesn't scale as expected with amount of threads")
 
 class TestStatusCodes(RequestsTest):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, thread_count=1, queue_size=1, **kwargs)
 
     async def _make_req(self, url, expected_status, stat_map, method='get'):
+        time.sleep(REQUEST_INTERVAL)
         task = asyncio.ensure_future(self.make_req(url, method=method))
 
         res = await asyncio.ensure_future(task)
+        if res.has_exception():
+            raise res.e
         headers = res.res.headers
 
         for k in stat_map:
@@ -268,6 +286,7 @@ class TestStatusCodes(RequestsTest):
             'stat-thread-dynamic': 1
         }
         asyncio.run(self._make_req(self.dyn_url, 200, stat_map))
+
     def test_static(self):
         stat_map = {
             'stat-req-arrival': None,

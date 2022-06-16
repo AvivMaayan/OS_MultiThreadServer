@@ -1,0 +1,563 @@
+I'm a thread! PID = 117330, pthread ID = 140125596542720
+index2.html
+Header: HTTP/1.0 404 Not found
+Header: Content-Type: text/html
+Length = 159
+Header: Content-Length: 159
+<html><title>OS-HW3 Error</title><body bgcolor=fffff>
+404: Not found
+<p>OS-HW3 Server could not find this file: ./public/index2.html
+<hr>OS-HW3 Web Server
+GET index2.html HTTP/1.1
+Stat-Req-Arrival:: 0.000000
+Stat-Req-Dispatch:: 1655136335.391010
+Stat-Thread-Id:: 8
+Stat-Thread-Count:: 11
+Stat-Thread-Static:: 0
+Stat-Thread-Dynamic:: 0
+
+Thread number 140125596542720 is DEAD!!
+I'm a thread! PID = 117330, pthread ID = 140125588150016
+doesn't
+Header: HTTP/1.0 404 Not found
+Header: Content-Type: text/html
+Length = 155
+Header: Content-Length: 155
+<html><title>OS-HW3 Error</title><body bgcolor=fffff>
+404: Not found
+<p>OS-HW3 Server could not find this file: ./public/doesn't
+<hr>OS-HW3 Web Server
+GET doesn't HTTP/1.1
+Stat-Req-Arrival:: 0.000000
+Stat-Req-Dispatch:: 1655136335.391301
+Stat-Thread-Id:: 4
+Stat-Thread-Count:: 9
+Stat-Thread-Static:: 0
+Stat-Thread-Dynamic:: 0
+
+Thread number 140125588150016 is DEAD!!
+I'm a thread! PID = 117330, pthread ID = 140125579757312
+index1.html
+Header: HTTP/1.0 404 Not found
+Header: Content-Type: text/html
+Length = 159
+Header: Content-Length: 159
+<html><title>OS-HW3 Error</title><body bgcolor=fffff>
+404: Not found
+<p>OS-HW3 Server could not find this file: ./public/index1.html
+<hr>OS-HW3 Web Server
+GET index1.html HTTP/1.1
+Stat-Req-Arrival:: 0.000000
+Stat-Req-Dispatch:: 1655136335.391420
+Stat-Thread-Id:: 3
+Stat-Thread-Count:: 8
+Stat-Thread-Static:: 0
+Stat-Thread-Dynamic:: 1
+
+Thread number 140125579757312 is DEAD!!
+I'm a thread! PID = 117330, pthread ID = 140125571364608
+output.cgi?9
+Header: HTTP/1.0 200 OK
+Header: Server: OS-HW3 Web Server
+I'm a thread! PID = 117330, pthread ID = 140125562971904
+index1.html
+Header: HTTP/1.0 404 Not found
+Header: Content-Type: text/html
+Length = 159
+Header: Content-Length: 159
+<html><title>OS-HW3 Error</title><body bgcolor=fffff>
+404: Not found
+<p>OS-HW3 Server could not find this file: ./public/index1.html
+<hr>OS-HW3 Web Server
+GET index1.html HTTP/1.1
+Stat-Req-Arrival:: 0.000000
+Stat-Req-Dispatch:: 1655136335.391780
+Stat-Thread-Id:: 0
+Stat-Thread-Count:: 9
+Stat-Thread-Static:: 0
+Stat-Thread-Dynamic:: 1
+
+Thread number 140125562971904 is DEAD!!
+I'm a thread! PID = 117330, pthread ID = 140125554579200
+index1.html
+Header: HTTP/1.0 404 Not found
+Header: Content-Type: text/html
+Length = 159
+Header: Content-Length: 159
+<html><title>OS-HW3 Error</title><body bgcolor=fffff>
+404: Not found
+<p>OS-HW3 Server could not find this file: ./public/index1.html
+<hr>OS-HW3 Web Server
+GET index1.html HTTP/1.1
+Stat-Req-Arrival:: 0.000000
+Stat-Req-Dispatch:: 1655136335.391923
+Stat-Thread-Id:: 2
+Stat-Thread-Count:: 11
+Stat-Thread-Static:: 0
+Stat-Thread-Dynamic:: 0
+
+Thread number 140125554579200 is DEAD!!
+I'm a thread! PID = 117330, pthread ID = 140125546186496
+doesn't
+Header: HTTP/1.0 404 Not found
+Header: Content-Type: text/html
+Length = 155
+Header: Content-Length: 155
+<html><title>OS-HW3 Error</title><body bgcolor=fffff>
+404: Not found
+<p>OS-HW3 Server could not find this file: ./public/doesn't
+<hr>OS-HW3 Web Server
+GET doesn't HTTP/1.1
+Stat-Req-Arrival:: 0.000000
+Stat-Req-Dispatch:: 1655136335.392061
+Stat-Thread-Id:: 1
+Stat-Thread-Count:: 8
+Stat-Thread-Static:: 0
+Stat-Thread-Dynamic:: 1
+
+Thread number 140125546186496 is DEAD!!
+I'm a thread! PID = 117330, pthread ID = 140125537793792
+index2.html
+Header: HTTP/1.0 404 Not found
+Header: Content-Type: text/html
+Length = 159
+Header: Content-Length: 159
+<html><title>OS-HW3 Error</title><body bgcolor=fffff>
+404: Not found
+<p>OS-HW3 Server could not find this file: ./public/index2.html
+<hr>OS-HW3 Web Server
+GET index2.html HTTP/1.1
+Stat-Req-Arrival:: 0.000000
+Stat-Req-Dispatch:: 1655136335.392203
+Stat-Thread-Id:: 10
+Stat-Thread-Count:: 7
+Stat-Thread-Static:: 0
+Stat-Thread-Dynamic:: 2
+
+Thread number 140125537793792 is DEAD!!
+I'm a thread! PID = 117330, pthread ID = 140125529401088
+output.cgi?15
+Header: HTTP/1.0 200 OK
+Header: Server: OS-HW3 Web Server
+I'm a thread! PID = 117330, pthread ID = 140125604935424
+doesn't
+Header: HTTP/1.0 404 Not found
+Header: Content-Type: text/html
+Length = 155
+Header: Content-Length: 155
+<html><title>OS-HW3 Error</title><body bgcolor=fffff>
+404: Not found
+<p>OS-HW3 Server could not find this file: ./public/doesn't
+<hr>OS-HW3 Web Server
+GET doesn't HTTP/1.1
+Stat-Req-Arrival:: 0.000000
+Stat-Req-Dispatch:: 1655136335.394567
+Stat-Thread-Id:: 11
+Stat-Thread-Count:: 7
+Stat-Thread-Static:: 0
+Stat-Thread-Dynamic:: 1
+
+Thread number 140125604935424 is DEAD!!
+I'm a thread! PID = 117330, pthread ID = 140125521008384
+index2.html
+Header: HTTP/1.0 404 Not found
+Header: Content-Type: text/html
+Length = 159
+Header: Content-Length: 159
+<html><title>OS-HW3 Error</title><body bgcolor=fffff>
+404: Not found
+<p>OS-HW3 Server could not find this file: ./public/index2.html
+<hr>OS-HW3 Web Server
+GET index2.html HTTP/1.1
+Stat-Req-Arrival:: 0.000000
+Stat-Req-Dispatch:: 1655136335.394730
+Stat-Thread-Id:: 5
+Stat-Thread-Count:: 7
+Stat-Thread-Static:: 0
+Stat-Thread-Dynamic:: 2
+
+Thread number 140125521008384 is DEAD!!
+I'm a thread! PID = 117330, pthread ID = 140125512615680
+index3.html
+Header: HTTP/1.0 404 Not found
+Header: Content-Type: text/html
+Length = 159
+Header: Content-Length: 159
+<html><title>OS-HW3 Error</title><body bgcolor=fffff>
+404: Not found
+<p>OS-HW3 Server could not find this file: ./public/index3.html
+<hr>OS-HW3 Web Server
+GET index3.html HTTP/1.1
+Stat-Req-Arrival:: 0.000000
+Stat-Req-Dispatch:: 1655136335.394865
+Stat-Thread-Id:: 7
+Stat-Thread-Count:: 9
+Stat-Thread-Static:: 0
+Stat-Thread-Dynamic:: 1
+
+Thread number 140125512615680 is DEAD!!
+I'm a thread! PID = 117330, pthread ID = 140125504222976
+output.cgi?9
+Header: HTTP/1.0 200 OK
+Header: Server: OS-HW3 Web Server
+I'm a thread! PID = 117330, pthread ID = 140125495830272
+doesn't
+Header: HTTP/1.0 404 Not found
+Header: Content-Type: text/html
+Length = 155
+Header: Content-Length: 155
+<html><title>OS-HW3 Error</title><body bgcolor=fffff>
+404: Not found
+<p>OS-HW3 Server could not find this file: ./public/doesn't
+<hr>OS-HW3 Web Server
+GET doesn't HTTP/1.1
+Stat-Req-Arrival:: 0.000000
+Stat-Req-Dispatch:: 1655136335.395326
+Stat-Thread-Id:: 4
+Stat-Thread-Count:: 10
+Stat-Thread-Static:: 0
+Stat-Thread-Dynamic:: 0
+
+Thread number 140125495830272 is DEAD!!
+I'm a thread! PID = 117330, pthread ID = 140125487437568
+doesn't
+Header: HTTP/1.0 404 Not found
+Header: Content-Type: text/html
+Length = 155
+Header: Content-Length: 155
+<html><title>OS-HW3 Error</title><body bgcolor=fffff>
+404: Not found
+<p>OS-HW3 Server could not find this file: ./public/doesn't
+<hr>OS-HW3 Web Server
+GET doesn't HTTP/1.1
+Stat-Req-Arrival:: 0.000000
+Stat-Req-Dispatch:: 1655136335.395488
+Stat-Thread-Id:: 3
+Stat-Thread-Count:: 9
+Stat-Thread-Static:: 0
+Stat-Thread-Dynamic:: 1
+
+Thread number 140125487437568 is DEAD!!
+I'm a thread! PID = 117330, pthread ID = 140125479044864
+output.cgi?5
+Header: HTTP/1.0 200 OK
+Header: Server: OS-HW3 Web Server
+I'm a thread! PID = 117330, pthread ID = 140125470652160
+doesn't
+Header: HTTP/1.0 404 Not found
+Header: Content-Type: text/html
+Length = 155
+Header: Content-Length: 155
+<html><title>OS-HW3 Error</title><body bgcolor=fffff>
+404: Not found
+<p>OS-HW3 Server could not find this file: ./public/doesn't
+<hr>OS-HW3 Web Server
+GET doesn't HTTP/1.1
+Stat-Req-Arrival:: 0.000000
+Stat-Req-Dispatch:: 1655136335.395935
+Stat-Thread-Id:: 2
+Stat-Thread-Count:: 12
+Stat-Thread-Static:: 0
+Stat-Thread-Dynamic:: 0
+
+Thread number 140125470652160 is DEAD!!
+I'm a thread! PID = 117330, pthread ID = 140125462259456
+index2.html
+Header: HTTP/1.0 404 Not found
+Header: Content-Type: text/html
+Length = 159
+Header: Content-Length: 159
+<html><title>OS-HW3 Error</title><body bgcolor=fffff>
+404: Not found
+<p>OS-HW3 Server could not find this file: ./public/index2.html
+<hr>OS-HW3 Web Server
+GET index2.html HTTP/1.1
+Stat-Req-Arrival:: 0.000000
+Stat-Req-Dispatch:: 1655136335.396082
+Stat-Thread-Id:: 1
+Stat-Thread-Count:: 9
+Stat-Thread-Static:: 0
+Stat-Thread-Dynamic:: 1
+
+Thread number 140125462259456 is DEAD!!
+I'm a thread! PID = 117330, pthread ID = 140125453866752
+
+Header: HTTP/1.0 404 Not found
+Header: Content-Type: text/html
+Length = 156
+Header: Content-Length: 156
+<html><title>OS-HW3 Error</title><body bgcolor=fffff>
+404: Not found
+<p>OS-HW3 Server could not find this file: ./public/HTTP/1.1
+<hr>OS-HW3 Web Server
+GET  HTTP/1.1
+Stat-Req-Arrival:: 0.000000
+Stat-Req-Dispatch:: 1655136335.400404
+Stat-Thread-Id:: 10
+Stat-Thread-Count:: 8
+Stat-Thread-Static:: 0
+Stat-Thread-Dynamic:: 2
+
+Thread number 140125453866752 is DEAD!!
+I'm a thread! PID = 117330, pthread ID = 140125445474048
+
+Header: HTTP/1.0 404 Not found
+Header: Content-Type: text/html
+Length = 156
+Header: Content-Length: 156
+<html><title>OS-HW3 Error</title><body bgcolor=fffff>
+404: Not found
+<p>OS-HW3 Server could not find this file: ./public/HTTP/1.1
+<hr>OS-HW3 Web Server
+GET  HTTP/1.1
+Stat-Req-Arrival:: 0.000000
+Stat-Req-Dispatch:: 1655136335.400656
+Stat-Thread-Id:: 11
+Stat-Thread-Count:: 8
+Stat-Thread-Static:: 0
+Stat-Thread-Dynamic:: 1
+
+Thread number 140125445474048 is DEAD!!
+I'm a thread! PID = 117330, pthread ID = 140125437081344
+
+Header: HTTP/1.0 404 Not found
+Header: Content-Type: text/html
+Length = 156
+Header: Content-Length: 156
+<html><title>OS-HW3 Error</title><body bgcolor=fffff>
+404: Not found
+<p>OS-HW3 Server could not find this file: ./public/HTTP/1.1
+<hr>OS-HW3 Web Server
+GET  HTTP/1.1
+Stat-Req-Arrival:: 0.000000
+Stat-Req-Dispatch:: 1655136335.400793
+Stat-Thread-Id:: 5
+Stat-Thread-Count:: 8
+Stat-Thread-Static:: 0
+Stat-Thread-Dynamic:: 2
+
+Thread number 140125437081344 is DEAD!!
+I'm a thread! PID = 117330, pthread ID = 140125613328128
+
+Header: HTTP/1.0 404 Not found
+Header: Content-Type: text/html
+Length = 156
+Header: Content-Length: 156
+<html><title>OS-HW3 Error</title><body bgcolor=fffff>
+404: Not found
+<p>OS-HW3 Server could not find this file: ./public/HTTP/1.1
+<hr>OS-HW3 Web Server
+GET  HTTP/1.1
+Stat-Req-Arrival:: 0.000000
+Stat-Req-Dispatch:: 1655136335.400924
+Stat-Thread-Id:: 7
+Stat-Thread-Count:: 10
+Stat-Thread-Static:: 0
+Stat-Thread-Dynamic:: 1
+
+Thread number 140125613328128 is DEAD!!
+I'm a thread! PID = 117330, pthread ID = 140125428688640
+
+Header: HTTP/1.0 404 Not found
+Header: Content-Type: text/html
+Length = 156
+Header: Content-Length: 156
+<html><title>OS-HW3 Error</title><body bgcolor=fffff>
+404: Not found
+<p>OS-HW3 Server could not find this file: ./public/HTTP/1.1
+<hr>OS-HW3 Web Server
+GET  HTTP/1.1
+Stat-Req-Arrival:: 0.000000
+Stat-Req-Dispatch:: 1655136335.401053
+Stat-Thread-Id:: 4
+Stat-Thread-Count:: 11
+Stat-Thread-Static:: 0
+Stat-Thread-Dynamic:: 0
+
+Thread number 140125428688640 is DEAD!!
+I'm a thread! PID = 117330, pthread ID = 140125420295936
+
+Header: HTTP/1.0 404 Not found
+Header: Content-Type: text/html
+Length = 156
+Header: Content-Length: 156
+<html><title>OS-HW3 Error</title><body bgcolor=fffff>
+404: Not found
+<p>OS-HW3 Server could not find this file: ./public/HTTP/1.1
+<hr>OS-HW3 Web Server
+GET  HTTP/1.1
+Stat-Req-Arrival:: 0.000000
+Stat-Req-Dispatch:: 1655136335.401180
+Stat-Thread-Id:: 3
+Stat-Thread-Count:: 10
+Stat-Thread-Static:: 0
+Stat-Thread-Dynamic:: 1
+
+Thread number 140125420295936 is DEAD!!
+I'm a thread! PID = 117330, pthread ID = 140125411903232
+
+Header: HTTP/1.0 404 Not found
+Header: Content-Type: text/html
+Length = 156
+Header: Content-Length: 156
+<html><title>OS-HW3 Error</title><body bgcolor=fffff>
+404: Not found
+<p>OS-HW3 Server could not find this file: ./public/HTTP/1.1
+<hr>OS-HW3 Web Server
+GET  HTTP/1.1
+Stat-Req-Arrival:: 0.000000
+Stat-Req-Dispatch:: 1655136335.401307
+Stat-Thread-Id:: 2
+Stat-Thread-Count:: 13
+Stat-Thread-Static:: 0
+Stat-Thread-Dynamic:: 0
+
+Thread number 140125411903232 is DEAD!!
+I'm a thread! PID = 117330, pthread ID = 140125403510528
+
+Header: HTTP/1.0 404 Not found
+Header: Content-Type: text/html
+Length = 156
+Header: Content-Length: 156
+<html><title>OS-HW3 Error</title><body bgcolor=fffff>
+404: Not found
+<p>OS-HW3 Server could not find this file: ./public/HTTP/1.1
+<hr>OS-HW3 Web Server
+GET  HTTP/1.1
+Stat-Req-Arrival:: 0.000000
+Stat-Req-Dispatch:: 1655136335.401408
+Stat-Thread-Id:: 1
+Stat-Thread-Count:: 10
+Stat-Thread-Static:: 0
+Stat-Thread-Dynamic:: 1
+
+Thread number 140125403510528 is DEAD!!
+I'm a thread! PID = 117330, pthread ID = 140125621720832
+
+Header: HTTP/1.0 404 Not found
+Header: Content-Type: text/html
+Length = 156
+Header: Content-Length: 156
+<html><title>OS-HW3 Error</title><body bgcolor=fffff>
+404: Not found
+<p>OS-HW3 Server could not find this file: ./public/HTTP/1.1
+<hr>OS-HW3 Web Server
+GET  HTTP/1.1
+Stat-Req-Arrival:: 0.000000
+Stat-Req-Dispatch:: 1655136335.401605
+Stat-Thread-Id:: 10
+Stat-Thread-Count:: 9
+Stat-Thread-Static:: 0
+Stat-Thread-Dynamic:: 2
+
+Thread number 140125621720832 is DEAD!!
+I'm a thread! PID = 117330, pthread ID = 140125630113536
+
+Header: HTTP/1.0 404 Not found
+Header: Content-Type: text/html
+Length = 156
+Header: Content-Length: 156
+<html><title>OS-HW3 Error</title><body bgcolor=fffff>
+404: Not found
+<p>OS-HW3 Server could not find this file: ./public/HTTP/1.1
+<hr>OS-HW3 Web Server
+GET  HTTP/1.1
+Stat-Req-Arrival:: 0.000000
+Stat-Req-Dispatch:: 1655136335.401713
+Stat-Thread-Id:: 11
+Stat-Thread-Count:: 9
+Stat-Thread-Static:: 0
+Stat-Thread-Dynamic:: 1
+
+Thread number 140125630113536 is DEAD!!
+I'm a thread! PID = 117330, pthread ID = 140125638506240
+
+Header: HTTP/1.0 404 Not found
+Header: Content-Type: text/html
+Length = 156
+Header: Content-Length: 156
+<html><title>OS-HW3 Error</title><body bgcolor=fffff>
+404: Not found
+<p>OS-HW3 Server could not find this file: ./public/HTTP/1.1
+<hr>OS-HW3 Web Server
+GET  HTTP/1.1
+Stat-Req-Arrival:: 0.000000
+Stat-Req-Dispatch:: 1655136335.403643
+Stat-Thread-Id:: 5
+Stat-Thread-Count:: 9
+Stat-Thread-Static:: 0
+Stat-Thread-Dynamic:: 2
+
+Thread number 140125638506240 is DEAD!!
+I'm a thread! PID = 117330, pthread ID = 140125646898944
+
+Header: HTTP/1.0 404 Not found
+Header: Content-Type: text/html
+Length = 156
+Header: Content-Length: 156
+<html><title>OS-HW3 Error</title><body bgcolor=fffff>
+404: Not found
+<p>OS-HW3 Server could not find this file: ./public/HTTP/1.1
+<hr>OS-HW3 Web Server
+GET  HTTP/1.1
+Stat-Req-Arrival:: 0.000000
+Stat-Req-Dispatch:: 1655136335.405211
+Stat-Thread-Id:: 7
+Stat-Thread-Count:: 11
+Stat-Thread-Static:: 0
+Stat-Thread-Dynamic:: 1
+
+Thread number 140125646898944 is DEAD!!
+Header: Content-length: 123
+Header: Content-type: text/html
+<p>Welcome to the CGI program</p>
+<p>My only purpose is to waste time on the server!</p>
+<p>I spun for 5.00 seconds</p>
+GET output.cgi?5 HTTP/1.1
+Stat-Req-Arrival:: 0.000000
+Stat-Req-Dispatch:: 1655136335.395663
+Stat-Thread-Id:: 0
+Stat-Thread-Count:: 10
+Stat-Thread-Static:: 0
+Stat-Thread-Dynamic:: 2
+
+Thread number 140125479044864 is DEAD!!
+Header: GET output.cgi?9 HTTP/1.1
+Header: Stat-Req-Arrival:: 0.000000
+Header: Stat-Req-Dispatch:: 1655136335.395002
+Header: Stat-Thread-Id:: 8
+Header: Stat-Thread-Count:: 12
+Header: Stat-Thread-Static:: 0
+Header: Stat-Thread-Dynamic:: 1
+Header: Content-length: 123
+Header: Content-type: text/html
+<p>Welcome to the CGI program</p>
+<p>My only purpose is to waste time on the server!</p>
+<p>I spun for 9.00 seconds</p>
+Header: GET output.cgi?15 HTTP/1.1
+Header: Stat-Req-Arrival:: 0.000000
+Header: Stat-Req-Dispatch:: 1655136335.394268
+Header: Stat-Thread-Id:: 6
+Header: Stat-Thread-Count:: 8
+Header: Stat-Thread-Static:: 0
+Header: Stat-Thread-Dynamic:: 3
+Content-length: 123
+Content-type: text/html
+
+<p>Welcome to the CGI program</p>
+<p>My only purpose is to waste time on the server!</p>
+<p>I spun for 9.00 seconds</p>
+Thread number 140125504222976 is DEAD!!
+GET output.cgi?9 HTTP/1.1
+Stat-Req-Arrival:: 0.000000
+Stat-Req-Dispatch:: 1655136335.391560
+Stat-Thread-Id:: 9
+Stat-Thread-Count:: 8
+Stat-Thread-Static:: 0
+Stat-Thread-Dynamic:: 2
+
+Thread number 140125571364608 is DEAD!!
+Content-length: 124
+Content-type: text/html
+
+<p>Welcome to the CGI program</p>

@@ -108,7 +108,7 @@ int initLocks()
 {
     ready_threads = 0;
     return pthread_mutex_init(&queue_lock, NULL) +
-           pthread_mutex_init(&queue_lock, NULL) +
+           pthread_cond_init(&thread_ready_cond, NULL) +
            pthread_cond_init(&req_ready_cond, NULL);
 }
 
@@ -179,6 +179,7 @@ void *serviceRequests(void *thread_id_ptr)
 
         req_handle_res res = requestHandle(connfd, &stats);
         DEBUG_PRINTF("thread: Handle, update stats and close\n");
+        // Lock is not needed because each thread is changing his own cell
         if (res == REQ_STATIC)
             thread_stats[thread_id][STAT_STATIC]++;
         else if (res == REQ_DYNAMIC)
@@ -278,7 +279,7 @@ int main(int argc, char *argv[])
                 DEBUG_PRINTF("Case Rand\n");
                 if (!queueIsEmpty(wait_q))
                 {
-                    int amount = (int)ceil(queueGetSize(wait_q) * DROP_PERCENT);
+                    int amount = (int)ceil((double)queueGetSize(wait_q) * DROP_PERCENT);
                     //queueDropAmountRandomly(wait_q, amount);
                     if (amount > queueGetSize(wait_q))
                     {
