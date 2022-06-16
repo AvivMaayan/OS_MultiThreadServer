@@ -30,10 +30,8 @@ typedef enum
 } sched_alg_t;
 
 pthread_mutex_t queue_lock;
-pthread_mutex_t busy_q_lock;
 pthread_cond_t thread_ready_cond;
 pthread_cond_t req_ready_cond;
-int ready_threads;
 int **thread_stats;
 Queue busy_q, wait_q;
 
@@ -107,11 +105,9 @@ int initQueues(int threads_num, int queue_size)
 // In case of failure return value will be Non-Zero
 int initLocks()
 {
-    ready_threads = 0;
     return pthread_mutex_init(&queue_lock, NULL) +
            pthread_cond_init(&thread_ready_cond, NULL) +
-           pthread_cond_init(&req_ready_cond, NULL) +
-           pthread_mutex_init(&busy_q_lock, NULL);
+           pthread_cond_init(&req_ready_cond, NULL);
 }
 
 // HW3: Parse the new arguments too
@@ -151,8 +147,6 @@ void *serviceRequests(void *thread_id_ptr)
         stats.handler_thread_id = thread_id;
         // Critical part start
         pthread_mutex_lock(&queue_lock);
-        ready_threads++;
-        pthread_cond_signal(&thread_ready_cond);
         while (queueIsEmpty(wait_q))
         {
             pthread_cond_wait(&req_ready_cond, &queue_lock);
@@ -160,43 +154,34 @@ void *serviceRequests(void *thread_id_ptr)
         }
         DEBUG_PRINTF("thread: got signal\n");
         int connfd = queueGetFD(wait_q);
+        stats.arrival_time = queueGetTime(wait_q);
+        queuePop(wait_q);
+        queuePush(busy_q, connfd, stats.service_time);        
+        pthread_mutex_unlock(&queue_lock);
+
         thread_stats[thread_id][STAT_TOTAL]++;
 
         // Filling in stats
         DEBUG_PRINTF("thread: Filling in stats\n");
-        stats.arrival_time = queueGetTime(wait_q);
-        queuePop(wait_q);
         gettimeofday(&stats.service_time, NULL);
-        timersub( &stats.service_time, &stats.arrival_time, &stats.dispatch_interval);
+        timersub(&stats.service_time, &stats.arrival_time, &stats.dispatch_interval);
         stats.handler_thread_req_count = thread_stats[thread_id][STAT_TOTAL];
         stats.handler_thread_static_req_count = thread_stats[thread_id][STAT_STATIC];
         stats.handler_thread_dynamic_req_count = thread_stats[thread_id][STAT_DYNAMIC];
-        //
-        // struct timeval handle;
-        // gettimeofday(&handle, NULL); 
-        ready_threads--;
-        pthread_mutex_unlock(&queue_lock);
-
-        pthread_mutex_lock(&busy_q_lock);
-        queuePush(busy_q, connfd, stats.service_time);
-        pthread_mutex_unlock(&busy_q_lock);
-        // Critical part end
 
         req_handle_res res = requestHandle(connfd, &stats);
-        // Critical part start
-        pthread_mutex_lock(&busy_q_lock);
-        queueRemove(busy_q, connfd);
-        pthread_mutex_unlock(&busy_q_lock);
-        // Critical part end
         Close(connfd);
-        DEBUG_PRINTF("thread: Handle, update stats and close\n");
+
         // Lock is not needed because each thread is changing his own cell
         if (res == REQ_STATIC)
             thread_stats[thread_id][STAT_STATIC]++;
         else if (res == REQ_DYNAMIC)
             thread_stats[thread_id][STAT_DYNAMIC]++;
 
-        DEBUG_PRINTF("thread: remove from busy_q\n");
+        pthread_mutex_lock(&queue_lock);
+        queueRemove(busy_q, connfd);
+        pthread_cond_signal(&thread_ready_cond);
+        pthread_mutex_unlock(&queue_lock);
     }
     return NULL;
 }

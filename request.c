@@ -36,10 +36,7 @@ void requestError(int fd, char *cause, char *errnum, char *shortmsg, char *longm
    char buf[MAXLINE], body[MAXBUF];
    // Create the body of the error message
    sprintf(body, "<html><title>OS-HW3 Error</title>");
-   sprintf(body, "%s<body bgcolor="
-                 "fffff"
-                 ">\r\n",
-           body);
+   sprintf(body, "%s<body bgcolor=""fffff"">\r\n",body);
    sprintf(body, "%s%s: %s\r\n", body, errnum, shortmsg);
    sprintf(body, "%s<p>%s: %s\r\n", body, longmsg, cause);
    sprintf(body, "%s<hr>OS-HW3 Web Server\r\n", body);
@@ -62,6 +59,7 @@ void requestError(int fd, char *cause, char *errnum, char *shortmsg, char *longm
    requestAddStats(buf, stats);
    // finishHeaders(buf);
    Rio_writen(fd, buf, strlen(buf));
+   printf("%s", buf);
 
    // Write out the content
    Rio_writen(fd, body, strlen(body));
@@ -152,7 +150,9 @@ void requestServeDynamic(int fd, char *filename, char *cgiargs, struct stat_s *s
 
    requestAddStatsDynamic(buf, stats);
    Rio_writen(fd, buf, strlen(buf));
+
    pid_t pid = Fork();
+   int res = 0;
    if (pid == 0)
    {
       /* Child process */
@@ -161,7 +161,7 @@ void requestServeDynamic(int fd, char *filename, char *cgiargs, struct stat_s *s
       Dup2(fd, STDOUT_FILENO);
       Execve(filename, emptylist, environ);
    }
-   waitpid(pid,0, 0);
+   WaitPid(pid, &res, 0);
    // Wait(NULL);
 }
 
@@ -200,18 +200,19 @@ req_handle_res requestHandle(int fd, struct stat_s *stats)
    DEBUG_PRINTF("thread: requestHandle\n\n");
    int is_static;
    struct stat sbuf;
-   char buf[MAXLINE], method[MAXLINE], uri[MAXLINE], version[MAXLINE], hostname[MAXLINE];
+   char buf[MAXLINE], method[MAXLINE], uri[MAXLINE], version[MAXLINE];
    char filename[MAXLINE], cgiargs[MAXLINE];
    rio_t rio;
 
    Rio_readinitb(&rio, fd);
    Rio_readlineb(&rio, buf, MAXLINE);
-   /*
    sscanf(buf, "%s %s %s", method, uri, version);
    printf("%s %s %s\n", method, uri, version);
-   */
+   /*
+   char hostname[MAXLINE];
    sscanf(buf, "%s %s %s %s", method, uri, version, hostname);
    printf("%s %s %s\nhost: %s\n\r\n", method, uri, version, hostname);
+   */
 
    if (strcasecmp(method, "GET"))
    {
@@ -249,5 +250,4 @@ req_handle_res requestHandle(int fd, struct stat_s *stats)
       requestServeDynamic(fd, filename, cgiargs, stats);
       return REQ_DYNAMIC;
    }
-   
 }
