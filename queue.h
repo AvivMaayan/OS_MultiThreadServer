@@ -41,7 +41,9 @@ struct timeval queueGetTime(Queue queue);
 
 void queuePush(Queue queue, int info, struct timeval arrival);
 
-void queueRemove(Queue queue, int to_remove);
+// void queueRemove(Queue queue, int to_remove);
+
+int queueIndex(Queue queue, int info);
 
 void queueDestroy(Queue queue);
 
