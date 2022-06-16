@@ -99,6 +99,7 @@ int queuePop(Queue queue)
     {
         queue->first = temp;
     }
+    queue->size--;
     return result;
 }
 
