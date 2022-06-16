@@ -137,7 +137,7 @@ void getArgs(int *port_num, int *threads_num, int *queue_size, sched_alg_t *sche
         fprintf(stderr, "%s is not a recognized sched alg\n", alg);
         exit(1);
     }
-    DEBUG_PRINTF("argv[4] is: %s, Alg is: %d\n",argv[4], *schedalg);
+    DEBUG_PRINTF("argv[4] is: %s, Alg is: %d\n", argv[4], *schedalg);
 }
 
 void *serviceRequests(void *thread_id_ptr)
@@ -165,8 +165,7 @@ void *serviceRequests(void *thread_id_ptr)
         stats.arrival_time = queueGetTime(wait_q);
         queuePop(wait_q);
         gettimeofday(&stats.service_time, NULL);
-        stats.dispatch_interval.tv_sec = stats.service_time.tv_sec - stats.arrival_time.tv_sec;
-        stats.dispatch_interval.tv_usec = stats.service_time.tv_usec - stats.arrival_time.tv_usec;
+        timersub( &stats.service_time, &stats.arrival_time, &stats.dispatch_interval);
         stats.handler_thread_req_count = thread_stats[thread_id][STAT_TOTAL];
         stats.handler_thread_static_req_count = thread_stats[thread_id][STAT_STATIC];
         stats.handler_thread_dynamic_req_count = thread_stats[thread_id][STAT_DYNAMIC];
@@ -280,7 +279,7 @@ int main(int argc, char *argv[])
                 if (!queueIsEmpty(wait_q))
                 {
                     int amount = (int)ceil((double)queueGetSize(wait_q) * DROP_PERCENT);
-                    //queueDropAmountRandomly(wait_q, amount);
+                    // queueDropAmountRandomly(wait_q, amount);
                     if (amount > queueGetSize(wait_q))
                     {
                         amount = queueGetSize(wait_q);

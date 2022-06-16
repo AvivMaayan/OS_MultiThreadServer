@@ -12,7 +12,22 @@ void requestAddStats(char *buf, struct stat_s *stats)
    sprintf(buf, "%sStat-Thread-Id:: %d\r\n", buf, stats->handler_thread_id);
    sprintf(buf, "%sStat-Thread-Count:: %d\r\n", buf, stats->handler_thread_req_count);
    sprintf(buf, "%sStat-Thread-Static:: %d\r\n", buf, stats->handler_thread_static_req_count);
-   sprintf(buf, "%sStat-Thread-Dynamic:: %d\r\n\r\n", buf,stats->handler_thread_dynamic_req_count);
+   sprintf(buf, "%sStat-Thread-Dynamic:: %d\r\n\r\n", buf, stats->handler_thread_dynamic_req_count);
+}
+
+void requestAddStatsDynamic(char *buf, struct stat_s *stats)
+{
+   sprintf(buf, "%sStat-Req-Arrival:: %lu.%06lu\r\n", buf, stats->arrival_time.tv_sec, stats->arrival_time.tv_usec);
+   sprintf(buf, "%sStat-Req-Dispatch:: %lu.%06lu\r\n", buf, stats->dispatch_interval.tv_sec, stats->dispatch_interval.tv_usec);
+   sprintf(buf, "%sStat-Thread-Id:: %d\r\n", buf, stats->handler_thread_id);
+   sprintf(buf, "%sStat-Thread-Count:: %d\r\n", buf, stats->handler_thread_req_count);
+   sprintf(buf, "%sStat-Thread-Static:: %d\r\n", buf, stats->handler_thread_static_req_count);
+   sprintf(buf, "%sStat-Thread-Dynamic:: %d\r\n", buf, stats->handler_thread_dynamic_req_count);
+}
+
+void finishHeaders(char *buf)
+{
+   sprintf(buf, "%s\r\n", buf);
 }
 
 // requestError(      fd,    filename,        "404",    "Not found", "OS-HW3 Server could not find this file");
@@ -42,9 +57,10 @@ void requestError(int fd, char *cause, char *errnum, char *shortmsg, char *longm
    Rio_writen(fd, buf, strlen(buf));
    printf("%s", buf);
 
-   //sprintf(buf, "");
+   // sprintf(buf, "");
    buf[0] = 0;
    requestAddStats(buf, stats);
+   // finishHeaders(buf);
    Rio_writen(fd, buf, strlen(buf));
 
    // Write out the content
@@ -134,10 +150,10 @@ void requestServeDynamic(int fd, char *filename, char *cgiargs, struct stat_s *s
    sprintf(buf, "HTTP/1.0 200 OK\r\n");
    sprintf(buf, "%sServer: OS-HW3 Web Server\r\n", buf);
 
-   requestAddStats(buf, stats);
+   requestAddStatsDynamic(buf, stats);
    Rio_writen(fd, buf, strlen(buf));
-
-   if (Fork() == 0)
+   pid_t pid = Fork();
+   if (pid == 0)
    {
       /* Child process */
       Setenv("QUERY_STRING", cgiargs, 1);
@@ -145,7 +161,8 @@ void requestServeDynamic(int fd, char *filename, char *cgiargs, struct stat_s *s
       Dup2(fd, STDOUT_FILENO);
       Execve(filename, emptylist, environ);
    }
-   Wait(NULL);
+   waitpid(pid,0, 0);
+   // Wait(NULL);
 }
 
 void requestServeStatic(int fd, char *filename, int filesize, struct stat_s *stats)
@@ -169,6 +186,7 @@ void requestServeStatic(int fd, char *filename, int filesize, struct stat_s *sta
    sprintf(buf, "%sContent-Type: %s\r\n", buf, filetype);
 
    requestAddStats(buf, stats);
+   // finishHeaders(buf);
    Rio_writen(fd, buf, strlen(buf));
 
    //  Writes out to the client socket the memory-mapped file
