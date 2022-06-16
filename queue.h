@@ -39,7 +39,7 @@ int queueGetFD(Queue queue);
 
 struct timeval queueGetTime(Queue queue);
 
-void queuePush(Queue queue, int info);
+void queuePush(Queue queue, int info, struct timeval arrival);
 
 void queueRemove(Queue queue, int to_remove);
 

@@ -1,7 +1,7 @@
 #include "segel.h"
 #include "request.h"
 #include "queue.h"
-
+#include <sys/time.h>
 //
 // server.c: A very, very simple web server
 //
@@ -30,6 +30,7 @@ typedef enum
 } sched_alg_t;
 
 pthread_mutex_t queue_lock;
+pthread_mutex_t busy_q_lock;
 pthread_cond_t thread_ready_cond;
 pthread_cond_t req_ready_cond;
 int ready_threads;
@@ -109,7 +110,8 @@ int initLocks()
     ready_threads = 0;
     return pthread_mutex_init(&queue_lock, NULL) +
            pthread_cond_init(&thread_ready_cond, NULL) +
-           pthread_cond_init(&req_ready_cond, NULL);
+           pthread_cond_init(&req_ready_cond, NULL) +
+           pthread_mutex_init(&busy_q_lock, NULL);
 }
 
 // HW3: Parse the new arguments too
@@ -170,27 +172,31 @@ void *serviceRequests(void *thread_id_ptr)
         stats.handler_thread_static_req_count = thread_stats[thread_id][STAT_STATIC];
         stats.handler_thread_dynamic_req_count = thread_stats[thread_id][STAT_DYNAMIC];
         //
-
-        queuePush(busy_q, connfd);
+        // struct timeval handle;
+        // gettimeofday(&handle, NULL); 
         ready_threads--;
         pthread_mutex_unlock(&queue_lock);
+
+        pthread_mutex_lock(&busy_q_lock);
+        queuePush(busy_q, connfd, stats.service_time);
+        pthread_mutex_unlock(&busy_q_lock);
         // Critical part end
 
         req_handle_res res = requestHandle(connfd, &stats);
+        // Critical part start
+        pthread_mutex_lock(&busy_q_lock);
+        queueRemove(busy_q, connfd);
+        pthread_mutex_unlock(&busy_q_lock);
+        // Critical part end
+        Close(connfd);
         DEBUG_PRINTF("thread: Handle, update stats and close\n");
         // Lock is not needed because each thread is changing his own cell
         if (res == REQ_STATIC)
             thread_stats[thread_id][STAT_STATIC]++;
         else if (res == REQ_DYNAMIC)
             thread_stats[thread_id][STAT_DYNAMIC]++;
-        Close(connfd);
 
         DEBUG_PRINTF("thread: remove from busy_q\n");
-        // Critical part start
-        pthread_mutex_lock(&queue_lock);
-        queueRemove(busy_q, connfd);
-        pthread_mutex_unlock(&queue_lock);
-        // Critical part end
     }
     return NULL;
 }
@@ -241,8 +247,10 @@ int main(int argc, char *argv[])
     {
         clientlen = sizeof(clientaddr);
         connfd = Accept(listenfd, (SA *)&clientaddr, (socklen_t *)&clientlen);
-
+        struct timeval arrival;
+        gettimeofday(&arrival, NULL); 
         pthread_mutex_lock(&queue_lock);
+        
         if (isFull(queue_size))
         {
             DEBUG_PRINTF("Server: isFull\n");
@@ -304,7 +312,7 @@ int main(int argc, char *argv[])
         if (connfd != FD_CLOSED)
         {
             DEBUG_PRINTF("Server: Add to queue\n");
-            queuePush(wait_q, connfd);
+            queuePush(wait_q, connfd, arrival);
             DEBUG_PRINTF("Server: send signal\n");
             pthread_cond_signal(&req_ready_cond);
         }

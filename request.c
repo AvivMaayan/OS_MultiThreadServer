@@ -249,4 +249,5 @@ req_handle_res requestHandle(int fd, struct stat_s *stats)
       requestServeDynamic(fd, filename, cgiargs, stats);
       return REQ_DYNAMIC;
    }
+   
 }

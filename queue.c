@@ -98,12 +98,12 @@ struct timeval create_time(Queue queue) {
     return temp;
 }
 
-void queuePush(Queue queue, int info) {
+void queuePush(Queue queue, int info, struct timeval arrival) {
     if(queueIsFull(queue)) {
         return;
     }
 
-    Node new_node = nodeCreate(info, create_time(queue));
+    Node new_node = nodeCreate(info, arrival);
     if(queueIsEmpty(queue)) {
         queue->first = new_node;
         queue->last = new_node;
